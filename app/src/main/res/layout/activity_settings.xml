@@ -19,7 +19,7 @@
             android:layout_width="54dp"
             android:layout_height="match_parent"
             android:layout_weight="0"
-            android:backgroundTint="#FFFFFF"
+            android:backgroundTint="@color/black"
             android:background="@android:color/transparent"
             app:icon="@drawable/button_arrow"
             app:iconTint="@color/black"
