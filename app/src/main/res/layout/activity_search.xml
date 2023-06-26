@@ -1,16 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity">
-
-    <TextView
-        android:id="@+id/message"
+    android:background="?attr/colorOnPrimary"
+    android:orientation="vertical">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="Много много всего"/>
+        android:orientation="horizontal"
+        android:paddingTop="24dp">
 
-</FrameLayout>
+        <Button
+            android:id="@+id/back"
+            style="@style/BackButtonStyle"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="@dimen/medium_padding"
+            android:text="@string/main_search"
+            style="@style/TitleTextStyle" />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/medium_padding"
+        android:layout_marginEnd="@dimen/medium_padding"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <EditText
+            style="@style/SearchLine"
+            android:id="@+id/searchEditText"
+            android:drawableStart="@drawable/button_search"
+            android:hint="@string/main_search"
+            android:inputType="text"
+            android:maxLines="1" />
+
+        <ImageView
+            android:id="@+id/clearSearchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/button_delete"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+
+</LinearLayout>
