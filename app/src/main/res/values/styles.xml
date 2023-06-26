@@ -58,5 +58,6 @@
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/radius_line</item>
         <item name="android:drawablePadding">@dimen/icon_padding</item>
+        <item name="android:padding">@dimen/icon_padding</item>
     </style>
 </resources>
