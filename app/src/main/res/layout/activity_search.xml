@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/colorOnPrimary"
     android:orientation="vertical">
     <LinearLayout
@@ -35,8 +36,12 @@
         android:orientation="horizontal">
 
         <EditText
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
             style="@style/SearchLine"
             android:id="@+id/searchEditText"
+            android:textColor="@color/black"
             android:drawableStart="@drawable/button_search"
             android:hint="@string/main_search"
             android:inputType="text"
@@ -46,7 +51,8 @@
             android:id="@+id/clearSearchButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/button_delete"
+            app:srcCompat="@drawable/button_delete"
+            app:tint="?attr/colorOnSecondary"
             android:visibility="gone" />
 
     </LinearLayout>

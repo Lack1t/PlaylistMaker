@@ -11,14 +11,16 @@ import android.widget.EditText
 import android.widget.ImageView
 
 class SearchActivity : AppCompatActivity() {
-    private var countValue: String = ""
+    private var enteredValue: String = ""
+
     companion object {
-        const val PRODUCT_AMOUNT = "PRODUCT_AMOUNT"
+        private const val DATA = "DATA"
     }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(PRODUCT_AMOUNT, countValue)
+        outState.putString(DATA, enteredValue)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,8 +35,8 @@ class SearchActivity : AppCompatActivity() {
         }
 
         if (savedInstanceState != null) {
-            countValue = savedInstanceState.getString(PRODUCT_AMOUNT, "")
-            searchEditText.setText(countValue)
+            enteredValue = savedInstanceState.getString(DATA, "")
+            searchEditText.setText(enteredValue)
         }
 
         searchEditText.addTextChangedListener(object : TextWatcher {
@@ -46,7 +48,7 @@ class SearchActivity : AppCompatActivity() {
                 } else {
                     clearButton.visibility = Button.VISIBLE
                 }
-                countValue = s.toString()
+                enteredValue = s.toString()
             }
 
             override fun afterTextChanged(s: Editable?) {}

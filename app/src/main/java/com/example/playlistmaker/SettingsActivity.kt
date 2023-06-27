@@ -25,21 +25,21 @@ class SettingsActivity : AppCompatActivity() {
         }
         val shareButton = findViewById<FrameLayout>(R.id.shareButton)
         shareButton.setOnClickListener {
-            val shareText = getString(R.string.share_link)
-            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            Intent(Intent.ACTION_SEND).apply {
+                val shareText = getString(R.string.share_link)
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, shareText)
+                startActivity(Intent.createChooser(this, "Поделиться приложением"))
             }
-            startActivity(Intent.createChooser(shareIntent, "Поделиться приложением"))
         }
         val supportButton = findViewById<FrameLayout>(R.id.supportButton)
         supportButton.setOnClickListener {
             val studentEmail = "lackit27@yandex.ru"
             val emailSubject = getString(R.string.email_subject)
             val emailText = getString(R.string.email_text)
-
-            val intent = Intent(Intent.ACTION_SENDTO).apply {
-                data = Uri.parse("mailto:$studentEmail")
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(studentEmail))
                 putExtra(Intent.EXTRA_SUBJECT, emailSubject)
                 putExtra(Intent.EXTRA_TEXT, emailText)
             }

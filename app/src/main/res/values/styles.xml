@@ -50,14 +50,10 @@
     </style>
 
     <style name="SearchLine" parent="android:Widget.EditText">
-        <item name="android:layout_width">0dp</item>
         <item name="android:textSize">@dimen/secondary_text_size</item>
         <item name="android:textColorHint">#AEAFB4</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
-        <item name="android:layout_height">36dp</item>
-        <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/radius_line</item>
         <item name="android:drawablePadding">@dimen/icon_padding</item>
-        <item name="android:padding">@dimen/icon_padding</item>
     </style>
 </resources>
