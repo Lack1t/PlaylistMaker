@@ -7,5 +7,4 @@
     <dimen name="button_radius">16dp</dimen>
     <dimen name="button_weight">1</dimen>
     <dimen name="layout_height">60dp</dimen>
-
 </resources>
