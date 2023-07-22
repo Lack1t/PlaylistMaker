@@ -1,5 +1,6 @@
 package com.example.playlistmaker
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -18,7 +19,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var filteredTrackList: List<Track>
     private lateinit var trackList: List<Track>
-        companion object {
+
+    companion object {
         private const val DATA = "DATA"
     }
 
@@ -61,16 +63,17 @@ class SearchActivity : AppCompatActivity() {
         )
         val track3 = Track(
             "Stayin' Alive",
-        "Bee Gees",
-        "4:10",
-        "https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg"
+            "Bee Gees",
+            "4:10",
+            "https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg"
 
         )
         val track4 = Track(
             "Whole Lotta Love",
             "Led Zeppelin",
             "5:33",
-            "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg")
+            "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"
+        )
         val track5 = Track(
             "Sweet Child O'Mine",
             "Guns N' Roses",
@@ -86,6 +89,7 @@ class SearchActivity : AppCompatActivity() {
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
+            @SuppressLint("NotifyDataSetChanged")
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s.isNullOrEmpty()) {
                     clearButton.visibility = View.GONE
@@ -94,7 +98,10 @@ class SearchActivity : AppCompatActivity() {
                 } else {
                     clearButton.visibility = View.VISIBLE
                     filteredTrackList = trackList.filter { track ->
-                        track.trackName.contains(s, ignoreCase = true) || track.artistName.contains(s, ignoreCase = true)
+                        track.trackName.contains(s, ignoreCase = true) || track.artistName.contains(
+                            s,
+                            ignoreCase = true
+                        )
                     }
                     recyclerView.visibility = View.VISIBLE
                 }
