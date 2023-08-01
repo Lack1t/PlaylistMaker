@@ -45,7 +45,9 @@
             android:drawableStart="@drawable/button_search"
             android:hint="@string/main_search"
             android:inputType="text"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:imeOptions="actionDone"
+            android:singleLine="true"/>
 
         <ImageView
             android:id="@+id/clearSearchButton"
@@ -56,11 +58,61 @@
             android:visibility="gone" />
 
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/linear_nothing_found"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/error_message"
+        android:orientation="vertical"
+        android:visibility="gone">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/no_result"
+            android:layout_gravity="center"
+            android:paddingTop="@dimen/error_message" />
+
+        <TextView
+            style="@style/ErrorTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/nothing_found" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/linear_no_internet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/error_message"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/no_internet"
+            android:layout_gravity="center"
+            android:paddingTop="@dimen/error_message"/>
+
+        <TextView
+            style="@style/ErrorTextStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/something_wrong" />
+        <Button
+            style="@style/RefreshButtonStyle"
+            android:id="@+id/buttonRefresh"
+            android:layout_gravity="center"
+            android:text="@string/refresh_button" />
+    </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
+        android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 </LinearLayout>

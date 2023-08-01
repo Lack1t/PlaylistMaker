@@ -9,18 +9,24 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import java.util.concurrent.TimeUnit
+
 class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val trackName: TextView = itemView.findViewById(R.id.trackName)
     private val artistName: TextView = itemView.findViewById(R.id.artistName)
-    private val trackTime: TextView = itemView.findViewById(R.id.trackTime)
+    private val trackTimeMillis: TextView = itemView.findViewById(R.id.trackTime)
     private val trackImage: ImageView = itemView.findViewById(R.id.trackCoverImageView)
 
     fun bind(track: Track) {
         trackName.text = track.trackName
         artistName.text = track.artistName
-        trackTime.text = track.trackTime
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(track.trackTimeMillis.toLong())
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(track.trackTimeMillis.toLong()) -
+                TimeUnit.MINUTES.toSeconds(minutes)
+        val formattedTime = String.format("%02d:%02d", minutes, seconds)
+        trackTimeMillis.text = formattedTime
 
-        val radiusDp = 10f
+        val radiusDp = 6f
         val radiusPx = dpToPx(radiusDp, itemView.context)
 
         Glide.with(itemView)
