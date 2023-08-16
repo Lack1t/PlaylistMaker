@@ -1,4 +1,5 @@
 package com.example.playlistmaker
+
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -18,8 +19,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
-
 
 
 class SearchActivity : AppCompatActivity() {
@@ -64,12 +63,6 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = trackAdapter
 
-        clearButton.visibility = View.GONE
-        recyclerView.visibility = View.GONE
-        linearNothingFound.visibility = View.GONE
-        linearNoInternet.visibility = View.GONE
-        refreshButton.visibility = View.GONE
-
         if (savedInstanceState != null) {
             enteredValue = savedInstanceState.getString(DATA, "")
             searchEditText.setText(enteredValue)
@@ -100,7 +93,8 @@ class SearchActivity : AppCompatActivity() {
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 performSearch(enteredValue)
-                val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                val inputMethodManager =
+                    getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                 inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
                 true
             } else {
@@ -110,7 +104,8 @@ class SearchActivity : AppCompatActivity() {
 
         clearButton.setOnClickListener {
             searchEditText.text.clear()
-            val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            val inputMethodManager =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
         }
 
