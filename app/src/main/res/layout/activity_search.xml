@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/colorOnPrimary"
     android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,14 +19,15 @@
             tools:ignore="SpeakableTextPresentCheck" />
 
         <TextView
+            style="@style/TitleTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:padding="@dimen/medium_padding"
-            android:text="@string/main_search"
-            style="@style/TitleTextStyle" />
+            android:text="@string/main_search" />
 
 
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
@@ -36,28 +38,29 @@
         android:orientation="horizontal">
 
         <EditText
+            android:id="@+id/searchEditText"
+            style="@style/SearchLine"
             android:layout_width="0dp"
             android:layout_height="36dp"
             android:layout_weight="1"
-            style="@style/SearchLine"
-            android:id="@+id/searchEditText"
-            android:textColor="@color/black"
             android:drawableStart="@drawable/button_search"
             android:hint="@string/main_search"
+            android:imeOptions="actionDone"
             android:inputType="text"
             android:maxLines="1"
-            android:imeOptions="actionDone"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:textColor="@color/black" />
 
         <ImageView
             android:id="@+id/clearSearchButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:visibility="gone"
             app:srcCompat="@drawable/button_delete"
-            app:tint="?attr/colorOnSecondary"
-            android:visibility="gone" />
+            app:tint="?attr/colorOnSecondary" />
 
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/linear_nothing_found"
         android:layout_width="wrap_content"
@@ -70,9 +73,9 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/no_result"
             android:layout_gravity="center"
-            android:paddingTop="@dimen/error_message" />
+            android:paddingTop="@dimen/error_message"
+            android:src="@drawable/no_result" />
 
         <TextView
             style="@style/ErrorTextStyle"
@@ -80,6 +83,7 @@
             android:layout_height="match_parent"
             android:text="@string/nothing_found" />
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/linear_no_internet"
         android:layout_width="wrap_content"
@@ -92,9 +96,9 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/no_internet"
             android:layout_gravity="center"
-            android:paddingTop="@dimen/error_message"/>
+            android:paddingTop="@dimen/error_message"
+            android:src="@drawable/no_internet" />
 
         <TextView
             style="@style/ErrorTextStyle"
@@ -102,17 +106,45 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/something_wrong" />
+
         <Button
-            style="@style/RefreshButtonStyle"
             android:id="@+id/buttonRefresh"
+            style="@style/RefreshButtonStyle"
             android:layout_gravity="center"
             android:text="@string/refresh_button" />
     </LinearLayout>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+
+    <LinearLayout
+        android:id="@+id/historyManager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:orientation="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        android:paddingTop="24dp">
+
+        <TextView
+            android:id="@+id/historySearch"
+            style="@style/HistoryMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/search_history"
+            android:visibility="gone"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="3"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/search_view" />
+
+        <Button
+            android:id="@+id/clearHistoryButton"
+            style="@style/RefreshButtonStyle"
+            android:layout_gravity="center"
+            android:text="@string/cleaner_history" />
+    </LinearLayout>
+
 </LinearLayout>

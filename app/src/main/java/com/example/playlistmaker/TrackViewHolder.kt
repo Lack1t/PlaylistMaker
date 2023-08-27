@@ -20,11 +20,18 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(track: Track) {
         trackName.text = track.trackName
         artistName.text = track.artistName
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(track.trackTimeMillis.toLong())
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(track.trackTimeMillis.toLong()) -
-                TimeUnit.MINUTES.toSeconds(minutes)
-        val formattedTime = String.format("%02d:%02d", minutes, seconds)
-        trackTimeMillis.text = formattedTime
+
+        val trackTimeMillisValue = track.trackTimeMillis
+        if (trackTimeMillisValue != null) {
+            val minutes = TimeUnit.MILLISECONDS.toMinutes(trackTimeMillisValue.toLong())
+            val seconds = TimeUnit.MILLISECONDS.toSeconds(trackTimeMillisValue.toLong()) -
+                    TimeUnit.MINUTES.toSeconds(minutes)
+
+            val timeString = String.format("%02d:%02d", minutes, seconds)
+            trackTimeMillis.text = timeString
+        } else {
+            trackTimeMillis.text = ""
+        }
 
         val radiusDp = 6f
         val radiusPx = dpToPx(radiusDp, itemView.context)
