@@ -15,9 +15,7 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
 
     fun saveSearchHistory(searchHistory: MutableList<Track>) {
         val editor = sharedPreferences.edit()
-
         val limitedHistory = searchHistory.takeLast(maxHistorySize).toMutableList()
-
         val searchHistoryJson = Gson().toJson(limitedHistory)
         editor.putString(searchHistoryKey, searchHistoryJson)
         editor.apply()
