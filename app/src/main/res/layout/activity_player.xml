@@ -1,0 +1,177 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/leftBorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/rightBorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/downBorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="20dp" />
+
+
+    <Button
+        android:id="@+id/btnPlayerBack"
+        style="@style/BackButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        tools:ignore="MissingConstraints" />
+
+
+    <ImageView
+        android:id="@+id/track_image"
+        android:layout_width="312dp"
+        android:layout_height="312dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnPlayerBack"
+        app:layout_constraintBottom_toTopOf="@+id/trackNameResult"
+        tools:ignore="MissingConstraints" />
+
+
+    <TextView
+        android:id="@+id/trackNameResult"
+        style="@style/nameTrackStyle"
+        app:layout_constraintTop_toBottomOf="@+id/track_image"
+        app:layout_constraintStart_toStartOf="@+id/track_image"
+        app:layout_constraintEnd_toEndOf="@+id/track_image"
+        app:layout_constraintBottom_toTopOf="@+id/artistNameResult"
+        android:layout_marginTop="24dp" />
+
+    <TextView
+        android:id="@+id/artistNameResult"
+        style="@style/artistTrackStyle"
+        app:layout_constraintTop_toBottomOf="@+id/trackNameResult"
+        app:layout_constraintStart_toStartOf="@+id/track_image"
+        app:layout_constraintEnd_toEndOf="@+id/track_image" />
+
+    <ImageButton
+        android:id="@+id/btnAdd"
+        style="@style/add_FavoriteButton"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/btnPlay"
+        app:layout_constraintTop_toBottomOf="@+id/artistNameResult"
+        app:layout_constraintBottom_toTopOf="@+id/progressTime"
+        android:src="@drawable/button__add"
+        tools:ignore="MissingConstraints" />
+    <ImageButton
+        android:id="@+id/btnPlay"
+        style="@style/playButton"
+        android:layout_marginTop="20dp"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@+id/artistNameResult" />
+
+    <ImageButton
+        android:id="@+id/btnFavorite"
+        style="@style/add_FavoriteButton"
+        app:layout_constraintStart_toEndOf="@+id/btnPlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/artistNameResult"
+        app:layout_constraintBottom_toTopOf="@id/progressTime"
+        android:src="@drawable/button__like"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/progressTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00 : 45"
+        app:layout_constraintBottom_toTopOf="@+id/trackTime_field"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnPlay"/>
+
+    <TextView
+        android:id="@+id/trackTimeResult"
+        style="@style/playerTrackResult"
+        android:layout_toEndOf="@id/trackTime_field"
+        app:layout_constraintBottom_toTopOf="@+id/collectionName_field"
+        app:layout_constraintTop_toBottomOf="@+id/progressTime"/>
+
+    <TextView
+        android:id="@+id/trackTime_field"
+        style="@style/playerTrackInfo"
+        android:text="@string/track_time"
+        app:layout_constraintBottom_toTopOf="@+id/collectionName_field"
+        app:layout_constraintTop_toBottomOf="@+id/progressTime"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="16dp"/>
+
+    <TextView
+        android:id="@+id/collection_Name"
+        style="@style/playerTrackResult"
+        android:layout_toEndOf="@id/collectionName_field"
+        app:layout_constraintBottom_toTopOf="@+id/releaseDate_field"
+        app:layout_constraintTop_toBottomOf="@+id/trackTime_field" />
+
+    <TextView
+        android:id="@+id/collectionName_field"
+        style="@style/playerTrackInfo"
+        android:text="@string/collection_name"
+        app:layout_constraintBottom_toTopOf="@+id/releaseDate_field"
+        app:layout_constraintTop_toBottomOf="@+id/trackTime_field"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <TextView
+        android:id="@+id/release_Date"
+        style="@style/playerTrackResult"
+        android:layout_toEndOf="@id/releaseDate_field"
+        app:layout_constraintBottom_toTopOf="@+id/primaryGenreName_field"
+        app:layout_constraintTop_toBottomOf="@+id/collectionName_field" />
+
+    <TextView
+        android:id="@+id/releaseDate_field"
+        style="@style/playerTrackInfo"
+        android:text="@string/release_date"
+        app:layout_constraintBottom_toTopOf="@+id/primaryGenreName_field"
+        app:layout_constraintTop_toBottomOf="@+id/collectionName_field"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/primary_GenreName"
+        style="@style/playerTrackResult"
+        android:layout_toEndOf="@id/primaryGenreName_field"
+        app:layout_constraintBottom_toTopOf="@+id/country_field"
+        app:layout_constraintTop_toBottomOf="@+id/releaseDate_field" />
+
+    <TextView
+        android:id="@+id/primaryGenreName_field"
+        style="@style/playerTrackInfo"
+        android:text="@string/primary_genre"
+        app:layout_constraintBottom_toTopOf="@+id/country_field"
+        app:layout_constraintTop_toBottomOf="@+id/releaseDate_field"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/country"
+        style="@style/playerTrackResult"
+        app:layout_constraintBottom_toBottomOf="@+id/downBorder"
+        app:layout_constraintTop_toBottomOf="@+id/primaryGenreName_field"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/country_field"
+        style="@style/playerTrackInfo"
+        android:text="@string/country_player"
+        app:layout_constraintBottom_toBottomOf="@+id/downBorder"
+        app:layout_constraintTop_toBottomOf="@+id/primaryGenreName_field"
+        tools:ignore="MissingConstraints"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

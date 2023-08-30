@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -64,7 +65,11 @@ class SearchActivity : AppCompatActivity() {
 
         searchHistory = SearchHistory(getSharedPreferences("search_history", Context.MODE_PRIVATE))
 
-        trackAdapter = TrackAdapter(filteredTrackList, searchHistory)
+        trackAdapter = TrackAdapter(filteredTrackList, searchHistory) { track ->
+            val intent = Intent(this@SearchActivity, PlayerActivity::class.java)
+            intent.putExtra("track", track)
+            startActivity(intent)
+        }
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = trackAdapter
 

@@ -16,4 +16,11 @@
     <string name="refresh_button">"Обновить"</string>
     <string name="search_history">Вы искали</string>
     <string name="cleaner_history">Очистить историю</string>
+    <string name="title_activity_player">PlayerActivity</string>
+    <string name="track_time">Длительность</string>
+    <string name="collection_name">Альбом</string>
+    <string name="release_date">Год</string>
+    <string name="primary_genre">Жанр</string>
+    <string name="country_player">Страна</string>
+
 </resources>

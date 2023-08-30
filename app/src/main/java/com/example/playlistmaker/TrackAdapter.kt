@@ -4,7 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class TrackAdapter(private var trackList: List<Track>, private val searchHistory: SearchHistory) : RecyclerView.Adapter<TrackViewHolder>() {
+class TrackAdapter(
+    private var trackList: List<Track>,
+    private val searchHistory: SearchHistory,
+    private val itemClickListener: (Track) -> Unit // Callback for item clicks
+) : RecyclerView.Adapter<TrackViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.search_view, parent, false)
@@ -16,6 +20,7 @@ class TrackAdapter(private var trackList: List<Track>, private val searchHistory
         holder.bind(track)
 
         holder.itemView.setOnClickListener {
+            itemClickListener(track) // Invoke the item click callback
             val history = searchHistory.loadSearchHistory().toMutableList()
 
             if (history.size >= searchHistory.maxHistorySize) {
@@ -30,6 +35,7 @@ class TrackAdapter(private var trackList: List<Track>, private val searchHistory
             history.add(0, track)
 
             searchHistory.saveSearchHistory(history)
+
         }
     }
 
@@ -39,5 +45,5 @@ class TrackAdapter(private var trackList: List<Track>, private val searchHistory
         trackList = newTrackList
         notifyDataSetChanged()
     }
-
 }
+
