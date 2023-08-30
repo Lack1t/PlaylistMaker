@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,7 +30,9 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var linearNothingFound: LinearLayout
     private lateinit var linearNoInternet: LinearLayout
     private lateinit var refreshButton: Button
-
+    private lateinit var clearHistoryButton: Button
+    private lateinit var searchHistory: SearchHistory
+    private lateinit var historySearch: TextView
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl("https://itunes.apple.com/")
         .addConverterFactory(GsonConverterFactory.create())
@@ -46,7 +49,6 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-
         searchEditText = findViewById(R.id.searchEditText)
         clearButton = findViewById(R.id.clearSearchButton)
         backButton = findViewById(R.id.back)
@@ -54,12 +56,15 @@ class SearchActivity : AppCompatActivity() {
         linearNothingFound = findViewById(R.id.linear_nothing_found)
         linearNoInternet = findViewById(R.id.linear_no_internet)
         refreshButton = findViewById(R.id.buttonRefresh)
-
+        clearHistoryButton = findViewById(R.id.clearHistoryButton)
+        historySearch = findViewById(R.id.historySearch)
         backButton.setOnClickListener {
             finish()
         }
 
-        trackAdapter = TrackAdapter(filteredTrackList)
+        searchHistory = SearchHistory(getSharedPreferences("search_history", Context.MODE_PRIVATE))
+
+        trackAdapter = TrackAdapter(filteredTrackList, searchHistory)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = trackAdapter
 
@@ -70,7 +75,6 @@ class SearchActivity : AppCompatActivity() {
 
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s.isNullOrBlank()) {
                     clearButton.visibility = View.GONE
@@ -86,15 +90,13 @@ class SearchActivity : AppCompatActivity() {
                 }
                 enteredValue = s.toString()
             }
-
             override fun afterTextChanged(s: Editable?) {}
         })
 
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 performSearch(enteredValue)
-                val inputMethodManager =
-                    getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                 inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
                 true
             } else {
@@ -102,19 +104,72 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
+        searchEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                clearHistoryButton.visibility = View.GONE
+                historySearch.visibility = View.GONE
+                recyclerView.visibility = View.GONE
+            } else {
+                val history = searchHistory.loadSearchHistory()
+                if (history.isNotEmpty()) {
+                    clearHistoryButton.visibility = View.VISIBLE
+                    historySearch.visibility = View.VISIBLE
+                    recyclerView.visibility = View.VISIBLE
+                }
+            }
+        }
         clearButton.setOnClickListener {
             searchEditText.text.clear()
-            val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            searchEditText.clearFocus()
+            val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
+            val history = searchHistory.loadSearchHistory()
+            if (history.isNotEmpty()) {
+                recyclerView.visibility = View.VISIBLE
+                linearNothingFound.visibility = View.GONE
+                linearNoInternet.visibility = View.GONE
+                trackAdapter.updateData(history)
+                clearHistoryButton.visibility = View.VISIBLE
+                historySearch.visibility = View.VISIBLE
+            } else {
+                recyclerView.visibility = View.GONE
+                linearNothingFound.visibility = View.GONE
+                linearNoInternet.visibility = View.GONE
+                clearHistoryButton.visibility = View.GONE
+                historySearch.visibility = View.GONE
+            }
         }
 
         refreshButton.setOnClickListener {
             performSearch(enteredValue)
         }
 
-        if (searchEditText.text.isNotBlank()) {
-            performSearch(enteredValue)
+        clearHistoryButton.setOnClickListener {
+            searchHistory.clearSearchHistory()
+            trackAdapter.updateData(emptyList())
+            recyclerView.visibility = View.GONE
+            linearNothingFound.visibility = View.GONE
+            linearNoInternet.visibility = View.GONE
+            historySearch.visibility = View.GONE
+            clearHistoryButton.visibility = View.GONE
+        }
+
+        if (searchEditText.text.isBlank()) {
+            val history = searchHistory.loadSearchHistory()
+            if (history.isNotEmpty()) {
+                recyclerView.visibility = View.VISIBLE
+                linearNothingFound.visibility = View.GONE
+                linearNoInternet.visibility = View.GONE
+                trackAdapter.updateData(history)
+                clearHistoryButton.visibility = View.VISIBLE
+                historySearch.visibility = View.VISIBLE
+            } else {
+                recyclerView.visibility = View.GONE
+                linearNothingFound.visibility = View.GONE
+                linearNoInternet.visibility = View.GONE
+                clearHistoryButton.visibility = View.GONE
+                historySearch.visibility = View.GONE
+            }
         }
     }
 
