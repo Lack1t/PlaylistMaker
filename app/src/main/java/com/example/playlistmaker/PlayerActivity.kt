@@ -72,7 +72,6 @@ class PlayerActivity : AppCompatActivity() {
             .load(imageUrl)
             .placeholder(R.drawable.placeholder)
             .transform(RoundedCorners(dpToPx(8f)))
-            .centerCrop()
             .into(trackImage)
 
         trackName.text = track.trackName
