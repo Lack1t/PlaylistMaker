@@ -75,7 +75,6 @@
         style="@style/playButton"
         android:layout_marginTop="20dp"
         tools:ignore="MissingConstraints"
-        android:src="@drawable/button_play"
         app:layout_constraintTop_toBottomOf="@+id/artistNameResult" />
 
     <ImageButton
@@ -92,7 +91,7 @@
         android:id="@+id/progressTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="00 : 00"
+        android:text="00 : 45"
         app:layout_constraintBottom_toTopOf="@+id/trackTime_field"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

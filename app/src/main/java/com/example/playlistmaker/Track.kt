@@ -10,8 +10,7 @@ data class Track(val trackName: String,
                  val collectionName: String,
                  val releaseDate: String,
                  val primaryGenreName: String,
-                 val country: String,
-                 val previewUrl: String,): Serializable
+                 val country: String,): Serializable
  {
     companion object {
         fun getCoverArtwork(artworkUrl100: String): String {

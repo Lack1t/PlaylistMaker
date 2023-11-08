@@ -95,8 +95,8 @@
         <item name="layout_constraintBottom_toTopOf">@+id/progressTime</item>
         <item name="android:layout_marginTop">44dp</item>
         <item name="android:layout_weight">1</item>
+        <item name="android:src">@drawable/button_play</item>
     </style>
-
 
     <style name="add_FavoriteButton">
         <item name="android:layout_width">wrap_content</item>
