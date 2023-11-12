@@ -20,35 +20,22 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(track: Track) {
         trackName.text = track.trackName
         artistName.text = track.artistName
-
-        val trackTimeMillisValue = track.trackTimeMillis
-        if (trackTimeMillisValue != null) {
-            val minutes = TimeUnit.MILLISECONDS.toMinutes(trackTimeMillisValue.toLong())
-            val seconds = TimeUnit.MILLISECONDS.toSeconds(trackTimeMillisValue.toLong()) -
-                    TimeUnit.MINUTES.toSeconds(minutes)
-
-            val timeString = String.format("%02d:%02d", minutes, seconds)
-            trackTimeMillis.text = timeString
-        } else {
-            trackTimeMillis.text = ""
-        }
-
-        val radiusDp = 6f
-        val radiusPx = dpToPx(radiusDp, itemView.context)
-
-        Glide.with(itemView)
+        trackTimeMillis.text = track.getFormattedDuration()
+        Glide.with(itemView.context)
             .load(track.artworkUrl100)
             .placeholder(R.drawable.placeholder)
             .transition(DrawableTransitionOptions.withCrossFade())
             .centerCrop()
-            .transform(RoundedCorners(radiusPx))
+            .transform(RoundedCorners(dpToPx(6f, itemView.context)))
             .into(trackImage)
+
     }
 
     private fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             dp,
-            context.resources.displayMetrics).toInt()
+            context.resources.displayMetrics
+        ).toInt()
     }
 }

@@ -65,14 +65,11 @@ class SearchActivity : AppCompatActivity() {
         historySearch = findViewById(R.id.historySearch)
 
         searchHistory = SearchHistory(getSharedPreferences("search_history", Context.MODE_PRIVATE))
-        trackAdapter = TrackAdapter(filteredTrackList, searchHistory) { track ->
-            handler.removeCallbacksAndMessages(null)
-            handler.postDelayed({
-                val intent = Intent(this, PlayerActivity::class.java).apply {
-                    putExtra("track", track)
-                }
-                startActivity(intent)
-            }, DEBOUNCE_DELAY)
+        trackAdapter = TrackAdapter(filteredTrackList, searchHistory, handler) { track ->
+            val intent = Intent(this, PlayerActivity::class.java).apply {
+                putExtra("track", track)
+            }
+            startActivity(intent)
         }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -95,7 +92,7 @@ class SearchActivity : AppCompatActivity() {
                 enteredValue = s.toString()
                 handler.removeCallbacks(searchRunnable)
                 if (enteredValue.isNotBlank()) {
-                    clearButton.visibility = View.GONE
+                    clearButton.visibility = View.VISIBLE
                     clearHistoryButton.visibility = View.GONE
                     historySearch.visibility = View.GONE
                     recyclerView.visibility = View.GONE
@@ -107,6 +104,7 @@ class SearchActivity : AppCompatActivity() {
                     showSearchHistory()
                 }
             }
+
             override fun afterTextChanged(s: Editable?) {}
         })
 
@@ -129,8 +127,6 @@ class SearchActivity : AppCompatActivity() {
 
         clearHistoryButton.setOnClickListener {
             handler.removeCallbacksAndMessages(null)
-            searchHistory.clearSearchHistory()
-            trackAdapter.updateData(emptyList())
             searchHistory.clearSearchHistory()
             trackAdapter.updateData(emptyList())
             recyclerView.visibility = View.GONE
@@ -187,6 +183,7 @@ class SearchActivity : AppCompatActivity() {
             }
         })
     }
+
     private fun showSearchHistory() {
         val history = searchHistory.loadSearchHistory()
         if (history.isNotEmpty()) {

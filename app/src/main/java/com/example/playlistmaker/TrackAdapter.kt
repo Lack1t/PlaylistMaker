@@ -1,26 +1,21 @@
 package com.example.playlistmaker
 
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.os.Handler
 import androidx.recyclerview.widget.RecyclerView
 
 class TrackAdapter(
     private var trackList: List<Track>,
     private val searchHistory: SearchHistory,
+    private val handler: Handler,
     private val itemClickListener: (Track) -> Unit
 ) : RecyclerView.Adapter<TrackViewHolder>() {
-
-    private val clickHandler = Handler(Looper.getMainLooper())
-    private var lastClickRunnable: Runnable? = null
-    private val debounceDelay: Long = 300
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.search_view, parent, false)
         return TrackViewHolder(view)
     }
-
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         val track = trackList[position]
@@ -28,16 +23,13 @@ class TrackAdapter(
 
         holder.itemView.setOnClickListener {
 
-            lastClickRunnable?.let { clickHandler.removeCallbacks(it) }
+            handler.removeCallbacksAndMessages(null)
 
-            lastClickRunnable = Runnable {
+            handler.postDelayed({
                 itemClickListener(track)
                 addToSearchHistory(track)
-            }.also { runnable ->
-                clickHandler.postDelayed(runnable, debounceDelay)
-            }
+            }, DEBOUNCE_DELAY)
         }
-
     }
 
     override fun getItemCount(): Int {
@@ -52,19 +44,16 @@ class TrackAdapter(
     private fun addToSearchHistory(track: Track) {
         val history = searchHistory.loadSearchHistory().toMutableList()
 
-        if (history.size >= searchHistory.maxHistorySize) {
-            history.removeAt(history.size - 1)
+        if (!history.any { it.trackId == track.trackId }) {
+            if (history.size >= searchHistory.maxHistorySize) {
+                history.removeAt(history.size - 1)
+            }
+            history.add(0, track)
+            searchHistory.saveSearchHistory(history)
         }
-
-        val existingIndex = history.indexOfFirst { it.trackId == track.trackId }
-        if (existingIndex != -1) {
-            history.removeAt(existingIndex)
-        }
-
-        history.add(0, track)
-        searchHistory.saveSearchHistory(history)
     }
 
+    companion object {
+        private const val DEBOUNCE_DELAY: Long = 500
+    }
 }
-
-

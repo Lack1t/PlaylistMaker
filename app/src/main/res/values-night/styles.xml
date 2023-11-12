@@ -136,9 +136,9 @@
     <item name="layout_constraintBottom_toTopOf">@+id/progressTime</item>
     <item name="android:layout_marginTop">44dp</item>
     <item name="android:layout_weight">1</item>
-    <item name="android:src">@drawable/button_play_dark</item>
+    <item name="android:src">@drawable/button_play</item>
+    <item name="android:tint">@color/white</item>
     <item name="android:backgroundTint">@color/crystal</item>
-    <item name="iconTint">@color/white</item>
 </style>
 
 

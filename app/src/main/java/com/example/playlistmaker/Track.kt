@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import java.io.Serializable
+import java.util.concurrent.TimeUnit
 
 data class Track(val trackName: String,
                  val artistName: String,
@@ -29,4 +30,10 @@ data class Track(val trackName: String,
             return date.substring(0, 4)
         }
     }
+     fun getFormattedDuration(): String {
+         val minutes = TimeUnit.MILLISECONDS.toMinutes(this.trackTimeMillis.toLong())
+         val seconds = TimeUnit.MILLISECONDS.toSeconds(this.trackTimeMillis.toLong()) -
+                 TimeUnit.MINUTES.toSeconds(minutes)
+         return String.format("%02d:%02d", minutes, seconds)
+     }
 }
