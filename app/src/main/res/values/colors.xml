@@ -11,4 +11,5 @@
     <color name="mainSecondary">#C88D18</color>
     <color name="grey">#E0E0E0</color>
     <color name="dark_grey">#FFAEAFB4</color>
+    <color name="crystal">#00000000</color>
 </resources>
