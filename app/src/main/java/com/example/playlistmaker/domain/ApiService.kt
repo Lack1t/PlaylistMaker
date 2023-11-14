@@ -1,6 +1,6 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.domain
 
-import com.google.gson.JsonObject
+import com.example.playlistmaker.domain.ApiResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

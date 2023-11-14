@@ -1,31 +1,33 @@
-package com.example.playlistmaker
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+package com.example.playlistmaker.presentation
+
 import android.os.Bundle
 import android.widget.Button
-
+import androidx.appcompat.app.AppCompatActivity
+import com.example.playlistmaker.R
+import com.example.playlistmaker.data.MainUseCaseImpl
+import com.example.playlistmaker.domain.MainUseCase
 
 class MainActivity : AppCompatActivity() {
+    private val mainUseCase: MainUseCase = MainUseCaseImpl(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         val search = findViewById<Button>(R.id.buttonSearch)
         val settings = findViewById<Button>(R.id.buttonSettings)
         val media = findViewById<Button>(R.id.buttonMedia)
 
         search.setOnClickListener {
-            val displayIntent = Intent(this, SearchActivity::class.java)
-            startActivity(displayIntent)
+            mainUseCase.navigateToSearch()
         }
+
         settings.setOnClickListener {
-            val displayIntent = Intent(this, SettingsActivity::class.java)
-            startActivity(displayIntent)
-
+            mainUseCase.navigateToSettings()
         }
+
         media.setOnClickListener {
-            val displayIntent = Intent(this, MediaActivity::class.java)
-            startActivity(displayIntent)
+            mainUseCase.navigateToMedia()
         }
-
     }
 }
