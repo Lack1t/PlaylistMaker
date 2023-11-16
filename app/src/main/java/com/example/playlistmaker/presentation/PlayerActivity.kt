@@ -9,7 +9,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.data.MediaPlayerManager
 import com.example.playlistmaker.domain.MediaPlayerUseCase
@@ -21,10 +23,10 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var btnPlayPause: ImageButton
     private lateinit var progressTime: TextView
     private lateinit var handler: Handler
-    private val mediaPlayerManager: MediaPlayerUseCase = MediaPlayerManager()
     private var isTrackingTime = false
 
     private val updateSeekBar = Runnable { startTrackingTime() }
+    private val mediaPlayerManager: MediaPlayerUseCase = Creator().getMediaPlayerUseCase()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +49,7 @@ class PlayerActivity : AppCompatActivity() {
                 mediaPlayerManager.pausePlayback()
             } else {
                 mediaPlayerManager.startPlayback()
+                startTrackingTime()
             }
             updateButtonImage()
         }
@@ -80,7 +83,12 @@ class PlayerActivity : AppCompatActivity() {
             Glide.with(this@PlayerActivity)
                 .load(Track.getCoverArtwork(track.artworkUrl100))
                 .placeholder(R.drawable.placeholder)
-                .transform(RoundedCorners(8))
+                .transform(
+                CenterCrop(),
+                RoundedCorners(
+                    resources.getDimensionPixelSize(R.dimen.album_cover_corner_radius)
+                ),
+            )
                 .into(this)
         }
         findViewById<TextView>(R.id.trackNameResult).text = track.trackName

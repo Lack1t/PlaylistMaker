@@ -1,4 +1,4 @@
-package com.example.playlistmaker.domain
+package com.example.playlistmaker.data
 
 import com.example.playlistmaker.domain.Track
 

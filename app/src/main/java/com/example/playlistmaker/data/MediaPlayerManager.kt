@@ -2,9 +2,10 @@ package com.example.playlistmaker.data
 
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import com.example.playlistmaker.domain.MediaPlayerCreator
 import com.example.playlistmaker.domain.MediaPlayerUseCase
 
-class MediaPlayerManager : MediaPlayerUseCase {
+class MediaPlayerManager : MediaPlayerUseCase, MediaPlayerCreator {
 
     private val mediaPlayer: MediaPlayer = MediaPlayer().apply {
         setAudioAttributes(
@@ -63,5 +64,8 @@ class MediaPlayerManager : MediaPlayerUseCase {
 
     fun release() {
         mediaPlayer.release()
+    }
+    override fun createMediaPlayer(): MediaPlayerUseCase {
+        return MediaPlayerManager()
     }
 }

@@ -1,10 +1,11 @@
-package com.example.playlistmaker.data
+package com.example.playlistmaker.presentation
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.os.Handler
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
+import com.example.playlistmaker.data.SearchHistory
 import com.example.playlistmaker.domain.Track
 
 class TrackAdapter(

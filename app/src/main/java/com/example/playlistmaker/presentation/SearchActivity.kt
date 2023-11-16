@@ -13,10 +13,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.domain.ApiResponse
-import com.example.playlistmaker.domain.ApiService
+import com.example.playlistmaker.data.ApiResponse
+import com.example.playlistmaker.data.ApiService
 import com.example.playlistmaker.data.SearchHistory
-import com.example.playlistmaker.data.TrackAdapter
 import com.example.playlistmaker.domain.Track
 import retrofit2.Call
 import retrofit2.Callback
