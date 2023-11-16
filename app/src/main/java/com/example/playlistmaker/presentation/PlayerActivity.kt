@@ -13,8 +13,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.MediaPlayerManager
-import com.example.playlistmaker.domain.MediaPlayerUseCase
+import com.example.playlistmaker.domain.MediaPlayerManager
 import com.example.playlistmaker.domain.Track
 
 @Suppress("DEPRECATION")
@@ -23,14 +22,17 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var btnPlayPause: ImageButton
     private lateinit var progressTime: TextView
     private lateinit var handler: Handler
-    private var isTrackingTime = false
+    private lateinit var mediaPlayerManager: MediaPlayerManager
 
+    private var isTrackingTime = false
     private val updateSeekBar = Runnable { startTrackingTime() }
-    private val mediaPlayerManager: MediaPlayerUseCase = Creator().getMediaPlayerUseCase()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player)
+
+        val creator = Creator()
+        mediaPlayerManager = creator.getMediaPlayerManager()
 
         val track = intent.getSerializableExtra("track") as? Track
         btnPlayPause = findViewById(R.id.btnPlay)
@@ -84,11 +86,11 @@ class PlayerActivity : AppCompatActivity() {
                 .load(Track.getCoverArtwork(track.artworkUrl100))
                 .placeholder(R.drawable.placeholder)
                 .transform(
-                CenterCrop(),
-                RoundedCorners(
-                    resources.getDimensionPixelSize(R.dimen.album_cover_corner_radius)
-                ),
-            )
+                    CenterCrop(),
+                    RoundedCorners(
+                        resources.getDimensionPixelSize(R.dimen.album_cover_corner_radius)
+                    ),
+                )
                 .into(this)
         }
         findViewById<TextView>(R.id.trackNameResult).text = track.trackName
@@ -113,7 +115,7 @@ class PlayerActivity : AppCompatActivity() {
         if (mediaPlayerManager.isPlaying()) {
             mediaPlayerManager.stopPlayback()
         }
-        (mediaPlayerManager as? MediaPlayerManager)?.release()
+        mediaPlayerManager.release()
         handler.removeCallbacks(updateSeekBar)
     }
 

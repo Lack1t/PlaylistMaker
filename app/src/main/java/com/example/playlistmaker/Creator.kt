@@ -1,13 +1,10 @@
 package com.example.playlistmaker
 
-import com.example.playlistmaker.data.MediaPlayerManager
-import com.example.playlistmaker.domain.MediaPlayerCreator
-import com.example.playlistmaker.domain.MediaPlayerUseCase
+import com.example.playlistmaker.data.MediaPlayerManagerImpl
+import com.example.playlistmaker.domain.MediaPlayerManager
 
 class Creator {
-    private val mediaPlayerCreator: MediaPlayerCreator = MediaPlayerManager()
-
-    fun getMediaPlayerUseCase(): MediaPlayerUseCase {
-        return mediaPlayerCreator.createMediaPlayer()
+    fun getMediaPlayerManager(): MediaPlayerManager {
+        return MediaPlayerManagerImpl()
     }
 }
