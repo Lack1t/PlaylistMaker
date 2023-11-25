@@ -1,6 +1,6 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.data
 
-import com.google.gson.JsonObject
+import com.example.playlistmaker.data.ApiResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
