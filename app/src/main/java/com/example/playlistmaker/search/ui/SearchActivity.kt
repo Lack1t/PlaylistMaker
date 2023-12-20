@@ -25,7 +25,8 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.search.data.SearchHistory
 import com.example.playlistmaker.sharing.domain.Track
 import com.example.playlistmaker.player.ui.PlayerActivity
-import com.example.playlistmaker.search.data.SearchRepository
+import com.example.playlistmaker.search.data.SearchRepositoryImpl
+import com.example.playlistmaker.search.domain.SearchInteractorImpl
 import com.example.playlistmaker.sharing.data.ApiServiceFactory
 
 class SearchActivity : AppCompatActivity() {
@@ -44,11 +45,15 @@ class SearchActivity : AppCompatActivity() {
     private var enteredValue: String = ""
     private val handler = Handler(Looper.getMainLooper())
 
+
+
     private val viewModel: SearchViewModel by lazy {
         val apiService = ApiServiceFactory.createApiService()
-        val searchHistory = SearchHistory(getSharedPreferences("search_history", MODE_PRIVATE))
-        val repository = SearchRepository(apiService, searchHistory)
-        val factory = SearchViewModelFactory(repository)
+        val sharedPreferences = getSharedPreferences("search_history", MODE_PRIVATE)
+        val searchHistory = SearchHistory(sharedPreferences)
+        val searchRepositoryImpl = SearchRepositoryImpl(apiService, searchHistory)
+        val interactor = SearchInteractorImpl(searchRepositoryImpl)
+        val factory = SearchViewModelFactory(interactor)
 
         ViewModelProvider(this, factory)[SearchViewModel::class.java]
     }
@@ -60,7 +65,9 @@ class SearchActivity : AppCompatActivity() {
         setupRecyclerView()
         setupSearchEditText()
         setupButtons()
-
+        viewModel.isSearchHistoryAvailable.observe(this) { isAvailable ->
+            clearHistoryButton.visibility = if (isAvailable) View.VISIBLE else View.GONE
+        }
         viewModel.tracks.observe(this) { tracks ->
             updateUIWithTracks(tracks)
         }
