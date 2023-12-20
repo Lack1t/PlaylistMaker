@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.playlistmaker.R
 import com.example.playlistmaker.sharing.domain.Track
-import com.example.playlistmaker.player.domain.PlayerViewModel
 import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.viewModels

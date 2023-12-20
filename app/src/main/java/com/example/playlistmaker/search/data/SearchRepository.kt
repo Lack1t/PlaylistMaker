@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.data
 
+import com.example.playlistmaker.search.domain.SearchInteractor
 import com.example.playlistmaker.sharing.data.ApiResponse
 import com.example.playlistmaker.sharing.data.ApiService
 import com.example.playlistmaker.sharing.domain.Track
@@ -7,9 +8,13 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SearchRepository(private val apiService: ApiService, private val searchHistory: SearchHistory) {
 
-    fun searchTrack(searchText: String, callback: (List<Track>) -> Unit) {
+class SearchRepository(
+    private val apiService: ApiService,
+    private val searchHistory: SearchHistory
+) : SearchInteractor {
+
+    override fun searchTrack(searchText: String, callback: (List<Track>) -> Unit) {
         apiService.searchTrack(searchText).enqueue(object : Callback<ApiResponse> {
             override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
                 if (response.isSuccessful) {
@@ -25,7 +30,9 @@ class SearchRepository(private val apiService: ApiService, private val searchHis
         })
     }
 
-    fun saveSearchHistory(track: Track) {
+
+
+    override fun saveSearchHistory(track: Track) {
         val history = loadSearchHistory().toMutableList()
 
         if (!history.any { it.trackId == track.trackId }) {
@@ -37,11 +44,11 @@ class SearchRepository(private val apiService: ApiService, private val searchHis
         }
     }
 
-    fun loadSearchHistory(): List<Track> {
+    override fun loadSearchHistory(): List<Track> {
         return searchHistory.loadSearchHistory()
     }
 
-    fun clearSearchHistory() {
+    override fun clearSearchHistory() {
         searchHistory.clearSearchHistory()
     }
 }

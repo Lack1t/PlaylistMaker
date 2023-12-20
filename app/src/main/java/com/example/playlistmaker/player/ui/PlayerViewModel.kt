@@ -1,10 +1,11 @@
-package com.example.playlistmaker.player.domain
+package com.example.playlistmaker.player.ui
 
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.playlistmaker.player.domain.MediaPlayerManager
 import com.example.playlistmaker.sharing.domain.Track
 
 class PlayerViewModel(private val mediaPlayerManager: MediaPlayerManager) : ViewModel()  {
@@ -31,14 +32,6 @@ class PlayerViewModel(private val mediaPlayerManager: MediaPlayerManager) : View
             mediaPlayerManager.startPlayback()
             _playStatus.value = true
             startTrackingPosition()
-        }
-    }
-
-
-    fun pausePlaybackIfNeeded() {
-        if (mediaPlayerManager.isPlaying()) {
-            mediaPlayerManager.pausePlayback()
-            _playStatus.value = false
         }
     }
 

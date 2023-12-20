@@ -22,15 +22,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.sharing.data.ApiService
 import com.example.playlistmaker.search.data.SearchHistory
 import com.example.playlistmaker.sharing.domain.Track
 import com.example.playlistmaker.player.ui.PlayerActivity
-import com.example.playlistmaker.presentation.TrackAdapter
 import com.example.playlistmaker.search.data.SearchRepository
-import com.example.playlistmaker.search.domain.SearchViewModel
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.playlistmaker.sharing.data.ApiServiceFactory
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var searchEditText: EditText
@@ -49,19 +45,13 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
 
     private val viewModel: SearchViewModel by lazy {
-        val apiService = Retrofit.Builder()
-            .baseUrl("https://itunes.apple.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ApiService::class.java)
-
+        val apiService = ApiServiceFactory.createApiService()
         val searchHistory = SearchHistory(getSharedPreferences("search_history", MODE_PRIVATE))
-
         val repository = SearchRepository(apiService, searchHistory)
         val factory = SearchViewModelFactory(repository)
+
         ViewModelProvider(this, factory)[SearchViewModel::class.java]
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)

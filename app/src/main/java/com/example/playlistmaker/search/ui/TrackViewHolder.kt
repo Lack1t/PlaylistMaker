@@ -1,4 +1,4 @@
-package com.example.playlistmaker.presentation
+package com.example.playlistmaker.search.ui
 
 import android.content.Context
 import android.util.TypedValue
