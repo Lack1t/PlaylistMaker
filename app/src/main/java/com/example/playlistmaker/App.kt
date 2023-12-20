@@ -12,7 +12,7 @@ class App : Application() {
         applyTheme()
     }
 
-    fun applyTheme() {
+    private fun applyTheme() {
         val sharedPreferences = getSharedPreferences("settings", Context.MODE_PRIVATE)
         val isDarkTheme = sharedPreferences.getBoolean("darkTheme", false)
 

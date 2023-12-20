@@ -1,12 +1,25 @@
-package com.example.playlistmaker.data
+
+package com.example.playlistmaker.search.data
+
+
 
 import android.content.SharedPreferences
-import com.example.playlistmaker.domain.Track
+import com.example.playlistmaker.sharing.domain.Track
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+
 class SearchHistory(private val sharedPreferences: SharedPreferences) {
+    companion object {
+        lateinit var shared: SearchHistory
+            private set
+    }
+
     private val searchHistoryKey = "search_history"
     val maxHistorySize = 10
+
+    init {
+        shared = this
+    }
 
     fun loadSearchHistory(): MutableList<Track> {
         val searchHistoryJson = sharedPreferences.getString(searchHistoryKey, null)
@@ -25,5 +38,6 @@ class SearchHistory(private val sharedPreferences: SharedPreferences) {
     fun clearSearchHistory() {
         sharedPreferences.edit().remove(searchHistoryKey).apply()
     }
-
 }
+
+

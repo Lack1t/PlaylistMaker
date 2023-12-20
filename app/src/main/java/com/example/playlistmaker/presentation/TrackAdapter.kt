@@ -2,16 +2,12 @@ package com.example.playlistmaker.presentation
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.os.Handler
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.SearchHistory
-import com.example.playlistmaker.domain.Track
+import com.example.playlistmaker.sharing.domain.Track
 
 class TrackAdapter(
     private var trackList: List<Track>,
-    private val searchHistory: SearchHistory,
-    private val handler: Handler,
     private val itemClickListener: (Track) -> Unit
 ) : RecyclerView.Adapter<TrackViewHolder>() {
 
@@ -25,13 +21,7 @@ class TrackAdapter(
         holder.bind(track)
 
         holder.itemView.setOnClickListener {
-
-            handler.removeCallbacksAndMessages(null)
-
-            handler.postDelayed({
-                itemClickListener(track)
-                addToSearchHistory(track)
-            }, DEBOUNCE_DELAY)
+            itemClickListener(track)
         }
     }
 
@@ -42,21 +32,5 @@ class TrackAdapter(
     fun updateData(newTrackList: List<Track>) {
         trackList = newTrackList
         notifyDataSetChanged()
-    }
-
-    private fun addToSearchHistory(track: Track) {
-        val history = searchHistory.loadSearchHistory().toMutableList()
-
-        if (!history.any { it.trackId == track.trackId }) {
-            if (history.size >= searchHistory.maxHistorySize) {
-                history.removeAt(history.size - 1)
-            }
-            history.add(0, track)
-            searchHistory.saveSearchHistory(history)
-        }
-    }
-
-    companion object {
-        private const val DEBOUNCE_DELAY: Long = 500
     }
 }

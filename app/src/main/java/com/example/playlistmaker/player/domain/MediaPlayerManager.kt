@@ -1,4 +1,4 @@
-package com.example.playlistmaker.domain
+package com.example.playlistmaker.player.domain
 interface MediaPlayerManager {
     fun prepareMediaPlayer(previewUrl: String)
     fun startPlayback()

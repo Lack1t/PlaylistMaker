@@ -1,34 +1,42 @@
-package com.example.playlistmaker.presentation
-
-import android.content.Context
+package com.example.playlistmaker.settings.ui
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
+import com.example.playlistmaker.settings.data.SettingsRepository
+import com.example.playlistmaker.settings.domain.SettingsInteractorImpl
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var themeSwitch: SwitchMaterial
-    private lateinit var sharedPrefs: SharedPreferences
+    private lateinit var viewModel: SettingsViewModel
 
+    @SuppressLint("QueryPermissionsNeeded")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        themeSwitch = findViewById(R.id.themeSwitcher)
-        sharedPrefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
-        themeSwitch.isChecked = sharedPrefs.getBoolean("darkTheme", false)
+        val repository = SettingsRepository(getSharedPreferences("settings", MODE_PRIVATE))
+        val interactor = SettingsInteractorImpl(repository)
 
-        themeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            sharedPrefs.edit().putBoolean("darkTheme", isChecked).apply()
-            setAppTheme(isChecked)
+        viewModel = ViewModelProvider(this, SettingsViewModelFactory(interactor))[SettingsViewModel::class.java]
+
+        viewModel.isDarkTheme.observe(this) { isDarkTheme ->
+            setAppTheme(isDarkTheme)
+        }
+
+        val themeSwitch = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+        themeSwitch.isChecked = viewModel.isDarkTheme.value ?: false
+
+        themeSwitch.setOnCheckedChangeListener { _, _ ->
+            viewModel.toggleDarkTheme()
         }
 
         val backButton = findViewById<Button>(R.id.back)
@@ -68,8 +76,6 @@ class SettingsActivity : AppCompatActivity() {
                 Toast.makeText(this, "Почтовый клиент не установлен", Toast.LENGTH_SHORT).show()
             }
         }
-
-        setAppTheme(themeSwitch.isChecked)
     }
 
     private fun setAppTheme(isDarkTheme: Boolean) {
