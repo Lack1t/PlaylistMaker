@@ -1,9 +1,10 @@
-package com.example.playlistmaker.data
+package com.example.playlistmaker.player.data
 
 
 import android.media.AudioAttributes
 import android.media.MediaPlayer
-import com.example.playlistmaker.domain.MediaPlayerManager
+import com.example.playlistmaker.player.domain.MediaPlayerManager
+
 
 class MediaPlayerManagerImpl : MediaPlayerManager {
 
@@ -16,6 +17,7 @@ class MediaPlayerManagerImpl : MediaPlayerManager {
         )
     }
 
+    private var isPrepared = false
     private var onCompletionListener: (() -> Unit)? = null
 
     init {
@@ -29,33 +31,39 @@ class MediaPlayerManagerImpl : MediaPlayerManager {
             reset()
             setDataSource(previewUrl)
             prepare()
+            isPrepared = true
         }
     }
 
     override fun startPlayback() {
-        if (!mediaPlayer.isPlaying) {
+        if (isPrepared && !mediaPlayer.isPlaying) {
             mediaPlayer.start()
         }
     }
 
     override fun pausePlayback() {
-        if (mediaPlayer.isPlaying) {
+        if (isPrepared && mediaPlayer.isPlaying) {
             mediaPlayer.pause()
         }
     }
 
     override fun stopPlayback() {
-        if (mediaPlayer.isPlaying) {
+        if (isPrepared && mediaPlayer.isPlaying) {
             mediaPlayer.stop()
+            isPrepared = false
         }
     }
 
     override fun isPlaying(): Boolean {
-        return mediaPlayer.isPlaying
+        return isPrepared && mediaPlayer.isPlaying
     }
 
     override fun getCurrentPosition(): Long {
-        return mediaPlayer.currentPosition.toLong()
+        return if (isPlaying()) {
+            mediaPlayer.currentPosition.toLong()
+        } else {
+            0L
+        }
     }
 
     override fun setOnCompletionListener(listener: () -> Unit) {
@@ -64,5 +72,6 @@ class MediaPlayerManagerImpl : MediaPlayerManager {
 
     override fun release() {
         mediaPlayer.release()
+        isPrepared = false
     }
 }

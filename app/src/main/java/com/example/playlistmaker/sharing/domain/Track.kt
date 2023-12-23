@@ -1,4 +1,4 @@
-package com.example.playlistmaker.domain
+package com.example.playlistmaker.sharing.domain
 
 import java.io.Serializable
 import java.util.concurrent.TimeUnit
@@ -19,11 +19,7 @@ data class Track(val trackName: String,
             return artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
         }
 
-        fun formatTrackDuration(duration: Long): String {
-            val minutes = duration / 60000
-            val seconds = (duration % 60000) / 1000
-            return "%02d:%02d".format(minutes, seconds)
-        }
+
 
 
         fun formatReleaseDate(date: String): String {
@@ -31,9 +27,12 @@ data class Track(val trackName: String,
         }
     }
      fun getFormattedDuration(): String {
-         val minutes = TimeUnit.MILLISECONDS.toMinutes(this.trackTimeMillis.toLong())
-         val seconds = TimeUnit.MILLISECONDS.toSeconds(this.trackTimeMillis.toLong()) -
+         val duration = trackTimeMillis?.toLongOrNull() ?: return "Unknown"
+
+         val minutes = TimeUnit.MILLISECONDS.toMinutes(duration)
+         val seconds = TimeUnit.MILLISECONDS.toSeconds(duration) -
                  TimeUnit.MINUTES.toSeconds(minutes)
          return String.format("%02d:%02d", minutes, seconds)
      }
-}
+
+ }

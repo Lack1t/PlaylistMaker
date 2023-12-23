@@ -37,29 +37,39 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/searchEditText"
-            style="@style/SearchLine"
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="36dp"
-            android:layout_weight="1"
-            android:drawableStart="@drawable/button_search"
-            android:hint="@string/main_search"
-            android:imeOptions="actionDone"
-            android:inputType="text"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textColor="@color/black" />
+            android:layout_weight="1">
 
-        <ImageView
-            android:id="@+id/clearSearchButton"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            app:srcCompat="@drawable/button_delete"
-            app:tint="?attr/colorOnSecondary" />
+            <EditText
+                android:id="@+id/searchEditText"
+                style="@style/SearchLine"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:drawableStart="@drawable/button_search"
+                android:paddingStart="12dp"
+                android:hint="@string/main_search"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/black" />
+
+            <ImageView
+                android:id="@+id/clearSearchButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:paddingEnd="12dp"
+                android:visibility="gone"
+                app:srcCompat="@drawable/button_delete"
+                app:tint="?attr/colorOnSecondary" />
+
+        </FrameLayout>
 
     </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/linear_nothing_found"

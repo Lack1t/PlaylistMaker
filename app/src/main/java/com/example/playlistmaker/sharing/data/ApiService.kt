@@ -1,6 +1,5 @@
-package com.example.playlistmaker.data
+package com.example.playlistmaker.sharing.data
 
-import com.example.playlistmaker.data.ApiResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

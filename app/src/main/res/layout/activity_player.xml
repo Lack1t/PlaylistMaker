@@ -75,7 +75,7 @@
         style="@style/playButton"
         android:layout_marginTop="20dp"
         tools:ignore="MissingConstraints"
-        android:src="@drawable/button_play"
+        android:src ="@drawable/button_play"
         app:layout_constraintTop_toBottomOf="@+id/artistNameResult" />
 
     <ImageButton
