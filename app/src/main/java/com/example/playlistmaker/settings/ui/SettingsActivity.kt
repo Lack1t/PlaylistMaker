@@ -8,11 +8,9 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
-import com.example.playlistmaker.settings.data.SettingsRepository
-import com.example.playlistmaker.settings.domain.SettingsInteractorImpl
 import com.google.android.material.switchmaterial.SwitchMaterial
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -23,10 +21,7 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val repository = SettingsRepository(getSharedPreferences("settings", MODE_PRIVATE))
-        val interactor = SettingsInteractorImpl(repository)
-
-        viewModel = ViewModelProvider(this, SettingsViewModelFactory(interactor))[SettingsViewModel::class.java]
+        viewModel = getViewModel()
 
         viewModel.isDarkTheme.observe(this) { isDarkTheme ->
             setAppTheme(isDarkTheme)

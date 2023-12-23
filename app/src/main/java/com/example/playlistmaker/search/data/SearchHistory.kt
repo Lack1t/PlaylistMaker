@@ -9,17 +9,12 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 class SearchHistory(private val sharedPreferences: SharedPreferences) {
-    companion object {
-        lateinit var shared: SearchHistory
-            private set
-    }
+
 
     private val searchHistoryKey = "search_history"
     val maxHistorySize = 10
 
-    init {
-        shared = this
-    }
+
 
     fun loadSearchHistory(): MutableList<Track> {
         val searchHistoryJson = sharedPreferences.getString(searchHistoryKey, null)

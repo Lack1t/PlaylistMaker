@@ -8,59 +8,76 @@ import com.example.playlistmaker.player.domain.MediaPlayerManager
 
 class MediaPlayerManagerImpl : MediaPlayerManager {
 
-    private val mediaPlayer: MediaPlayer = MediaPlayer().apply {
-        setAudioAttributes(
-            AudioAttributes.Builder()
-                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                .setUsage(AudioAttributes.USAGE_MEDIA)
-                .build()
-        )
-    }
-
+    private var mediaPlayer: MediaPlayer? = null
     private var isPrepared = false
     private var onCompletionListener: (() -> Unit)? = null
 
     init {
-        mediaPlayer.setOnCompletionListener {
-            onCompletionListener?.invoke()
+        initializeMediaPlayer()
+    }
+
+    private fun initializeMediaPlayer() {
+        mediaPlayer?.release()
+        mediaPlayer = MediaPlayer().apply {
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .build()
+            )
+
+            setOnCompletionListener {
+                onCompletionListener?.invoke()
+            }
         }
     }
 
     override fun prepareMediaPlayer(previewUrl: String) {
-        mediaPlayer.apply {
-            reset()
+        mediaPlayer?.apply {
+            if (isPlaying || isPrepared) {
+                reset()
+            }
             setDataSource(previewUrl)
             prepare()
             isPrepared = true
+        } ?: run {
+            initializeMediaPlayer()
+            prepareMediaPlayer(previewUrl)
         }
     }
 
     override fun startPlayback() {
-        if (isPrepared && !mediaPlayer.isPlaying) {
-            mediaPlayer.start()
+        mediaPlayer?.apply {
+            if (isPrepared && !isPlaying) {
+                start()
+            }
         }
     }
 
     override fun pausePlayback() {
-        if (isPrepared && mediaPlayer.isPlaying) {
-            mediaPlayer.pause()
+        mediaPlayer?.apply {
+            if (isPrepared && isPlaying) {
+                pause()
+            }
         }
     }
 
     override fun stopPlayback() {
-        if (isPrepared && mediaPlayer.isPlaying) {
-            mediaPlayer.stop()
-            isPrepared = false
+        mediaPlayer?.apply {
+            if (isPrepared && isPlaying) {
+                stop()
+                isPrepared = false
+            }
         }
     }
 
     override fun isPlaying(): Boolean {
-        return isPrepared && mediaPlayer.isPlaying
+        return mediaPlayer?.isPlaying == true && isPrepared
     }
 
     override fun getCurrentPosition(): Long {
         return if (isPlaying()) {
-            mediaPlayer.currentPosition.toLong()
+            mediaPlayer?.currentPosition?.toLong() ?: 0L
         } else {
             0L
         }
@@ -71,7 +88,8 @@ class MediaPlayerManagerImpl : MediaPlayerManager {
     }
 
     override fun release() {
-        mediaPlayer.release()
+        mediaPlayer?.release()
+        mediaPlayer = null
         isPrepared = false
     }
 }

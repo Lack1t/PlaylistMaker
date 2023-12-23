@@ -32,8 +32,4 @@ class SearchViewModel(private val interactor: SearchInteractor) : ViewModel()  {
         _tracks.postValue(emptyList())
         _isSearchHistoryAvailable.postValue(false)
     }
-    fun hasSearchHistory(): Boolean {
-        val history = interactor.loadSearchHistory()
-        return history.isNotEmpty()
-    }
 }

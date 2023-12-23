@@ -18,16 +18,12 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.data.SearchHistory
 import com.example.playlistmaker.sharing.domain.Track
 import com.example.playlistmaker.player.ui.PlayerActivity
-import com.example.playlistmaker.search.data.SearchRepositoryImpl
-import com.example.playlistmaker.search.domain.SearchInteractorImpl
-import com.example.playlistmaker.sharing.data.ApiServiceFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var searchEditText: EditText
@@ -47,16 +43,7 @@ class SearchActivity : AppCompatActivity() {
 
 
 
-    private val viewModel: SearchViewModel by lazy {
-        val apiService = ApiServiceFactory.createApiService()
-        val sharedPreferences = getSharedPreferences("search_history", MODE_PRIVATE)
-        val searchHistory = SearchHistory(sharedPreferences)
-        val searchRepositoryImpl = SearchRepositoryImpl(apiService, searchHistory)
-        val interactor = SearchInteractorImpl(searchRepositoryImpl)
-        val factory = SearchViewModelFactory(interactor)
-
-        ViewModelProvider(this, factory)[SearchViewModel::class.java]
-    }
+    private val viewModel: SearchViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -124,6 +111,7 @@ class SearchActivity : AppCompatActivity() {
                 enteredValue = s.toString()
                 viewModel.searchTracks(enteredValue)
                 clearButton.visibility = if (enteredValue.isNotEmpty()) View.VISIBLE else View.GONE
+                clearHistoryButton.visibility = if (enteredValue.isEmpty()) View.VISIBLE else View.GONE
             }
 
             override fun afterTextChanged(s: Editable?) {}

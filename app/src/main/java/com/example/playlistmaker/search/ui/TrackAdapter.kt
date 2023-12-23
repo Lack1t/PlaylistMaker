@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.ui
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +30,7 @@ class TrackAdapter(
         return trackList.size
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateData(newTrackList: List<Track>) {
         trackList = newTrackList
         notifyDataSetChanged()

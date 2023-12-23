@@ -2,6 +2,7 @@ package com.example.playlistmaker.player.ui
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,9 +21,11 @@ class PlayerViewModel(private val mediaPlayerManager: MediaPlayerManager) : View
 
     fun loadTrack(track: Track) {
         _trackData.value = track
+        Log.d("PlayerViewModel", "Preparing MediaPlayer with previewUrl: ${track.previewUrl}")
         mediaPlayerManager.prepareMediaPlayer(track.previewUrl)
         _playStatus.postValue(false)
     }
+
 
     fun playOrPause() {
         if (mediaPlayerManager.isPlaying()) {
