@@ -11,22 +11,15 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.sharing.domain.Track
 import android.widget.Button
 import android.widget.ImageView
-import androidx.activity.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.player.data.MediaPlayerManagerImpl
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @Suppress("DEPRECATION")
 class PlayerActivity : AppCompatActivity() {
 
-    private val mediaPlayerManager = MediaPlayerManagerImpl()
-
-    private val viewModel: PlayerViewModel by viewModels {
-        PlayerViewModelFactory(mediaPlayerManager)
-    }
-
-
+    private val viewModel: PlayerViewModel by viewModel()
     private lateinit var btnPlayPause: ImageButton
     private lateinit var progressTime: TextView
     private lateinit var handler: Handler
