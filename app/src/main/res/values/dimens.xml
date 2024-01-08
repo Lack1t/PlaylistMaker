@@ -7,6 +7,7 @@
     <dimen name="refresh_text_size">14sp</dimen>
     <dimen name="medium_padding">16dp</dimen>
     <dimen name="icon_padding">10dp</dimen>
+    <dimen name="media_padding">12dp</dimen>
     <dimen name="button_radius">16dp</dimen>
     <dimen name="button_weight">1</dimen>
     <dimen name="layout_height">60dp</dimen>
@@ -14,4 +15,6 @@
     <dimen name="history_message">19sp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="album_cover_corner_radius">8dp</dimen>
+    <dimen name="playlist_padding">46dp</dimen>
+    <dimen name="media_placeholder">106dp</dimen>
 </resources>
