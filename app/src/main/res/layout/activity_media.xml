@@ -3,14 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="?attr/colorOnPrimary"
+    style="@style/MediaBackgroudStyle"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorOnPrimary"
         android:theme="?attr/actionBarTheme"
         app:navigationIcon="?attr/homeAsUpIndicator">
 
@@ -28,7 +27,7 @@
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorOnPrimary"
+        style="@style/MediaBackgroudStyle"
         app:tabTextColor="?attr/colorOnSecondary"
         app:tabIndicatorColor="?attr/colorOnSecondary"
         app:tabTextAppearance="@style/TabTextStyle"/>
@@ -37,6 +36,7 @@
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        style="@style/MediaBackgroudStyle"/>
 
 </LinearLayout>

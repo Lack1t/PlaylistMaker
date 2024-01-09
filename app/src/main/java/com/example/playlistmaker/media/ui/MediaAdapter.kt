@@ -7,8 +7,13 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 
 class MediaAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
     FragmentStateAdapter(fragmentManager, lifecycle) {
+
+    companion object {
+        private const val NUM_PAGES = 2
+    }
+
     override fun getItemCount(): Int {
-        return 2
+        return NUM_PAGES
     }
 
     override fun createFragment(position: Int): Fragment {
