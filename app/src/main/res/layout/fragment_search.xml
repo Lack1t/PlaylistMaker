@@ -4,19 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorOnPrimary"
-    android:orientation="vertical">
+    style="@style/MediaBackgroudStyle"
+    android:orientation="vertical"
+    tools:context="com.example.playlistmaker.search.ui.SearchFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="24dp">
+        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/back"
-            style="@style/BackButtonStyle"
-            tools:ignore="SpeakableTextPresentCheck" />
 
         <TextView
             style="@style/TitleTextStyle"
@@ -34,6 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/medium_padding"
         android:layout_marginEnd="@dimen/medium_padding"
+        android:layout_marginTop="8dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -63,8 +60,7 @@
                 android:layout_gravity="end|center_vertical"
                 android:paddingEnd="12dp"
                 android:visibility="gone"
-                app:srcCompat="@drawable/button_delete"
-                app:tint="?attr/colorOnSecondary" />
+                app:srcCompat="@drawable/button_delete" />
 
         </FrameLayout>
 
@@ -168,7 +164,7 @@
             android:layout_gravity="center"
             android:progress="100"
             app:trackColor="@color/blue"
-            app:indicatorColor="?attr/colorOnPrimary"/>
+            app:indicatorColor="?attr/colorOnSecondary"/>
     </LinearLayout>
 
 </LinearLayout>

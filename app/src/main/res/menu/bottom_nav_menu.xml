@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/searchFragment2"
+        android:icon="@drawable/button_search"
+        android:title="@string/main_search" />
+    <item
+        android:id="@+id/mediaFragment2"
+        android:icon="@drawable/button_media"
+        android:title="@string/main_media" />
+    <item
+        android:id="@+id/settingsFragment2"
+        android:icon="@drawable/button_settings"
+        android:title="@string/main_settings" />
+</menu>
