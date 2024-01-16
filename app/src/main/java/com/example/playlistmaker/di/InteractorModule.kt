@@ -7,6 +7,6 @@ import com.example.playlistmaker.settings.domain.SettingsInteractorImpl
 import org.koin.dsl.module
 
 val interactorModule = module {
-    single<SettingsInteractor> { SettingsInteractorImpl(get()) }
-    single<SearchInteractor> { SearchInteractorImpl(get()) }
+    factory<SettingsInteractor> { SettingsInteractorImpl(get()) }
+    factory<SearchInteractor> { SearchInteractorImpl(get()) }
 }

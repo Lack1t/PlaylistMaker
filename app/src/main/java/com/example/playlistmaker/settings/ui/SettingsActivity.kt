@@ -1,4 +1,5 @@
 package com.example.playlistmaker.settings.ui
+
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
@@ -10,18 +11,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.R
 import com.google.android.material.switchmaterial.SwitchMaterial
-import org.koin.androidx.viewmodel.ext.android.getViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel: SettingsViewModel by viewModel()
 
     @SuppressLint("QueryPermissionsNeeded")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-
-        viewModel = getViewModel()
 
         viewModel.isDarkTheme.observe(this) { isDarkTheme ->
             setAppTheme(isDarkTheme)
