@@ -4,9 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.provider.ContactsContract.Intents.Insert.DATA
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -14,10 +11,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.sharing.domain.Track
 import com.example.playlistmaker.player.ui.PlayerActivity
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -25,8 +29,7 @@ class SearchFragment : Fragment() {
     private var binding: FragmentSearchBinding? = null
     private val viewModel: SearchViewModel by viewModel()
     private lateinit var trackAdapter: TrackAdapter
-    private var trackClickRunnable: Runnable? = null
-    private val handler = Handler(Looper.getMainLooper())
+    private var searchJob: Job? = null
     private var enteredValue: String = ""
 
     override fun onCreateView(
@@ -44,46 +47,43 @@ class SearchFragment : Fragment() {
         setupButtons()
         observeViewModel()
         viewModel.loadSearchHistory()
-        savedInstanceState?.getString(DATA)?.let {
-            enteredValue = it
-            binding?.searchEditText?.setText(enteredValue)
-            viewModel.searchTracks(enteredValue)
-        }
     }
 
     private fun setupRecyclerView() {
         trackAdapter = TrackAdapter(emptyList()) { track ->
-            trackClickRunnable?.let { handler.removeCallbacks(it) }
-            trackClickRunnable = Runnable {
-                viewModel.addTrackToSearchHistory(track)
-                openPlayer(track)
-            }
-            handler.postDelayed(trackClickRunnable!!, 200)
+            viewModel.addTrackToSearchHistory(track)
+            openPlayer(track)
         }
         binding?.recyclerView?.layoutManager = LinearLayoutManager(context)
         binding?.recyclerView?.adapter = trackAdapter
     }
 
     private fun setupSearchEditText() {
-        binding?.searchEditText?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
+        val searchFlow = MutableStateFlow("")
 
+        binding?.searchEditText?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                enteredValue = s.toString()
-                if (enteredValue.isEmpty()) {
-                    viewModel.loadSearchHistory()
-                } else {
-                    viewModel.searchTracks(enteredValue)
-                }
-                binding?.clearSearchButton?.visibility =
-                    if (enteredValue.isNotEmpty()) View.VISIBLE else View.GONE
-                binding?.clearHistoryButton?.visibility =
-                    if (enteredValue.isEmpty()) View.VISIBLE else View.GONE
+                searchFlow.value = s.toString()
             }
-            override fun afterTextChanged(s: Editable?) {
-            }
+            override fun afterTextChanged(s: Editable?) {}
         })
+
+        searchFlow.debounce(300).onEach { searchText ->
+            enteredValue = searchText
+            if (searchText.isEmpty()) {
+                viewModel.loadSearchHistory()
+            } else {
+                searchJob?.cancel()
+                searchJob = lifecycleScope.launch {
+                    viewModel.searchTracks(searchText)
+                }
+            }
+            binding?.clearSearchButton?.visibility =
+                if (searchText.isNotEmpty()) View.VISIBLE else View.GONE
+            binding?.clearHistoryButton?.visibility =
+                if (searchText.isEmpty()) View.VISIBLE else View.GONE
+        }.launchIn(lifecycleScope)
     }
 
     private fun setupButtons() {
@@ -116,10 +116,8 @@ class SearchFragment : Fragment() {
 
         viewModel.tracks.observe(viewLifecycleOwner) { tracks ->
             updateUIWithTracks(tracks)
-
         }
     }
-
 
     @SuppressLint("NotifyDataSetChanged")
     private fun updateUIWithTracks(tracks: List<Track>) {
@@ -140,7 +138,7 @@ class SearchFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        searchJob?.cancel()
         binding = null
-        trackClickRunnable?.let { handler.removeCallbacks(it) }
     }
 }

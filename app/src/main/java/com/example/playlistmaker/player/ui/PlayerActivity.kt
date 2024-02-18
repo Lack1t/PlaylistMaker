@@ -1,58 +1,50 @@
 package com.example.playlistmaker.player.ui
-
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.playlistmaker.R
-import com.example.playlistmaker.sharing.domain.Track
-import android.widget.Button
-import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.ActivityPlayerBinding
+import com.example.playlistmaker.sharing.domain.Track
+import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.coroutines.CoroutineContext
 
 @Suppress("DEPRECATION")
-class PlayerActivity : AppCompatActivity() {
+class PlayerActivity : AppCompatActivity(), CoroutineScope {
 
     private val viewModel: PlayerViewModel by viewModel()
-    private lateinit var btnPlayPause: ImageButton
-    private lateinit var progressTime: TextView
-    private lateinit var handler: Handler
-    private val updateSeekBar = Runnable { startTrackingTime() }
-
+    private lateinit var binding: ActivityPlayerBinding
+    private lateinit var job: Job
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_player)
+        binding = ActivityPlayerBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+        job = Job()
 
-        initViews()
         setupListeners()
         observeViewModel()
-        val track = intent.getSerializableExtra("track") as? Track
-        track?.let {
-            viewModel.loadTrack(it)
+
+        (intent.getSerializableExtra("track") as? Track)?.let { track ->
+            viewModel.loadTrack(track)
         }
-
     }
 
-    private fun initViews() {
-        btnPlayPause = findViewById(R.id.btnPlay)
-        Log.d("PlayerActivity", "Initial Play Button State set to Play")
-        progressTime = findViewById(R.id.progressTime)
-        handler = Handler(Looper.getMainLooper())
-    }
+
 
     private fun setupListeners() {
-        btnPlayPause.setOnClickListener {
+        binding.btnPlay.setOnClickListener {
             viewModel.playOrPause()
         }
 
-        findViewById<Button>(R.id.btnPlayerBack).setOnClickListener {
+        binding.btnPlayerBack.setOnClickListener {
             onBackPressed()
         }
     }
@@ -65,23 +57,10 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.playStatus.observe(this) { isPlaying ->
             updateButtonImage(isPlaying)
         }
+
         viewModel.trackPosition.observe(this) { position ->
-            updateTrackPosition(position)
+            binding.progressTime.text = formatTrackDuration(position)
         }
-    }
-
-    private fun startTrackingTime() {
-        val currentPosition = viewModel.getCurrentPosition()
-        progressTime.text = formatTrackDuration(currentPosition)
-        if (viewModel.isPlaying()) {
-            handler.postDelayed(updateSeekBar, 300)
-        }
-    }
-
-
-    private fun updateButtonImage(isPlaying: Boolean) {
-        val imageResource = if (isPlaying) R.drawable.button_pause else R.drawable.button_play
-        btnPlayPause.setImageResource(imageResource)
     }
 
     private fun fillTrackData(track: Track) {
@@ -109,30 +88,31 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun formatTrackDuration(duration: Long): String {
-        val minutes = duration / 60000
-        val seconds = (duration % 60000) / 1000
-        return String.format("%02d:%02d", minutes, seconds)
+    private fun updateButtonImage(isPlaying: Boolean) {
+        binding.btnPlay.setImageResource(if (isPlaying) R.drawable.button_pause else R.drawable.button_play)
     }
 
-    override fun onPause() {
-        super.onPause()
-        handler.removeCallbacks(updateSeekBar)
+    private fun formatTrackDuration(durationInMillis: Long): String {
+        val minutes = durationInMillis / 60000
+        val seconds = (durationInMillis % 60000) / 1000
+        return String.format("%02d:%02d", minutes, seconds)
     }
 
     override fun onResume() {
         super.onResume()
         if (viewModel.isPlaying()) {
-            startTrackingTime()
+            viewModel.startTrackingPosition()
         }
     }
+
+    override fun onPause() {
+        super.onPause()
+        job.cancel()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacks(updateSeekBar)
+        job.cancel()
         viewModel.releaseResources()
-    }
-    private fun updateTrackPosition(position: Long) {
-        progressTime.text = formatTrackDuration(position)
     }
 }

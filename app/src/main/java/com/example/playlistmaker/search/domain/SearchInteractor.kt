@@ -1,10 +1,11 @@
 package com.example.playlistmaker.search.domain
 
 import com.example.playlistmaker.sharing.domain.Track
+import kotlinx.coroutines.flow.Flow
 
 interface SearchInteractor {
-    fun searchTrack(searchText: String, callback: (List<Track>) -> Unit)
-    fun saveSearchHistory(track: Track)
-    fun loadSearchHistory(): List<Track>
-    fun clearSearchHistory()
+    fun searchTrack(searchText: String): Flow<List<Track>>
+    suspend fun saveSearchHistory(track: Track)
+    suspend fun loadSearchHistory(): List<Track>
+    suspend fun clearSearchHistory()
 }

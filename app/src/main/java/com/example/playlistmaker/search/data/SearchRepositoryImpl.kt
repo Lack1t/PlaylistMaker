@@ -1,35 +1,29 @@
 package com.example.playlistmaker.search.data
 
 import com.example.playlistmaker.search.domain.SearchRepository
-import com.example.playlistmaker.sharing.data.ApiResponse
 import com.example.playlistmaker.sharing.data.ApiService
 import com.example.playlistmaker.sharing.domain.Track
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.Dispatchers
 
 class SearchRepositoryImpl(
     private val apiService: ApiService,
     private val searchHistory: SearchHistory
 ) : SearchRepository {
 
-    override fun searchTrack(searchText: String, callback: (List<Track>) -> Unit) {
-        apiService.searchTrack(searchText).enqueue(object : Callback<ApiResponse> {
-            override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
-                if (response.isSuccessful) {
-                    callback(response.body()?.results ?: emptyList())
-                } else {
-                    callback(emptyList())
-                }
-            }
+    override fun searchTrack(searchText: String): Flow<List<Track>> = flow {
 
-            override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
-                callback(emptyList())
-            }
-        })
-    }
+        try {
+            val response = apiService.searchTrack(searchText)
+            emit(response.results)
+        } catch (e: Exception) {
+            emit(emptyList())
+        }
+    }.flowOn(Dispatchers.IO)
 
-    override fun saveSearchHistory(track: Track) {
+    override suspend fun saveSearchHistory(track: Track) {
         val history = loadSearchHistory().toMutableList()
 
         if (!history.any { it.trackId == track.trackId }) {
@@ -41,12 +35,11 @@ class SearchRepositoryImpl(
         }
     }
 
-    override fun loadSearchHistory(): List<Track> {
+    override suspend fun loadSearchHistory(): List<Track> {
         return searchHistory.loadSearchHistory()
     }
 
-    override fun clearSearchHistory() {
+    override suspend fun clearSearchHistory() {
         searchHistory.clearSearchHistory()
     }
 }
-

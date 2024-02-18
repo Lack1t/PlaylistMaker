@@ -1,15 +1,13 @@
 package com.example.playlistmaker.player.ui
-
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.player.domain.MediaPlayerManager
 import com.example.playlistmaker.sharing.domain.Track
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class PlayerViewModel(private val mediaPlayerManager: MediaPlayerManager) : ViewModel()  {
+class PlayerViewModel(private val mediaPlayerManager: MediaPlayerManager) : ViewModel(), CoroutineScope {
     private val _trackData = MutableLiveData<Track>()
     val trackData: LiveData<Track> = _trackData
 
@@ -19,13 +17,16 @@ class PlayerViewModel(private val mediaPlayerManager: MediaPlayerManager) : View
     private val _trackPosition = MutableLiveData<Long>()
     val trackPosition: LiveData<Long> = _trackPosition
 
+    private var playerJob: Job? = null
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + (playerJob ?: SupervisorJob())
+
     fun loadTrack(track: Track) {
         _trackData.value = track
-        Log.d("PlayerViewModel", "Preparing MediaPlayer with previewUrl: ${track.previewUrl}")
         mediaPlayerManager.prepareMediaPlayer(track.previewUrl)
         _playStatus.postValue(false)
     }
-
 
     fun playOrPause() {
         if (mediaPlayerManager.isPlaying()) {
@@ -42,33 +43,33 @@ class PlayerViewModel(private val mediaPlayerManager: MediaPlayerManager) : View
         mediaPlayerManager.release()
     }
 
-    private val positionUpdateHandler = Handler(Looper.getMainLooper())
-    private var positionUpdateRunnable: Runnable? = null
-
-    private fun startTrackingPosition() {
-        positionUpdateRunnable?.let { positionUpdateHandler.removeCallbacks(it) }
-
-        positionUpdateRunnable = object : Runnable {
-            override fun run() {
+   fun startTrackingPosition() {
+        playerJob?.cancel()
+        playerJob = launch {
+            while (isActive) {
                 if (mediaPlayerManager.isPlaying()) {
                     _trackPosition.postValue(mediaPlayerManager.getCurrentPosition())
-                    positionUpdateHandler.postDelayed(this, 1000)
+                } else {
+                    stopTrackingPosition()
+                    _trackPosition.postValue(0)
+                    _playStatus.postValue(false)
                 }
+                delay(300)
             }
         }
-        positionUpdateHandler.post(positionUpdateRunnable!!)
     }
 
+    private fun stopTrackingPosition() {
+        playerJob?.cancel()
+    }
 
     override fun onCleared() {
         super.onCleared()
-        positionUpdateRunnable?.let { positionUpdateHandler.removeCallbacks(it) }
+        playerJob?.cancel()
         mediaPlayerManager.release()
     }
+
     fun isPlaying(): Boolean {
         return mediaPlayerManager.isPlaying()
-    }
-    fun getCurrentPosition(): Long {
-        return mediaPlayerManager.getCurrentPosition()
     }
 }

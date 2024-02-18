@@ -1,26 +1,22 @@
 package com.example.playlistmaker.search.domain
 
-import com.example.playlistmaker.search.data.SearchRepositoryImpl
 import com.example.playlistmaker.sharing.domain.Track
+import kotlinx.coroutines.flow.Flow
 
-
-
-
-class SearchInteractorImpl(private val repository: SearchRepositoryImpl) : SearchInteractor {
-
-    override fun searchTrack(searchText: String, callback: (List<Track>) -> Unit) {
-        repository.searchTrack(searchText, callback)
+class SearchInteractorImpl(private val repository: SearchRepository) : SearchInteractor {
+    override fun searchTrack(searchText: String): Flow<List<Track>> {
+        return repository.searchTrack(searchText)
     }
 
-    override fun saveSearchHistory(track: Track) {
+    override suspend fun saveSearchHistory(track: Track) {
         repository.saveSearchHistory(track)
     }
 
-    override fun loadSearchHistory(): List<Track> {
+    override suspend fun loadSearchHistory(): List<Track> {
         return repository.loadSearchHistory()
     }
 
-    override fun clearSearchHistory() {
+    override suspend fun clearSearchHistory() {
         repository.clearSearchHistory()
     }
 }
