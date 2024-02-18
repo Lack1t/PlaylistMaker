@@ -1,8 +1,9 @@
 package com.example.playlistmaker.search.ui
 
-import android.annotation.SuppressLint
+import TrackDiffCallback
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.sharing.domain.Track
@@ -30,9 +31,10 @@ class TrackAdapter(
         return trackList.size
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun updateData(newTrackList: List<Track>) {
-        trackList = newTrackList
-        notifyDataSetChanged()
+        val diffCallback = TrackDiffCallback(this.trackList, newTrackList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        this.trackList = newTrackList
+        diffResult.dispatchUpdatesTo(this)
     }
 }
