@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/MediaBackgroudStyle"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.example.playlistmaker.media.ui.MediaFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:navigationIcon="?attr/homeAsUpIndicator">
+        android:theme="?attr/actionBarTheme">
 
         <TextView
             android:id="@+id/toolbar_title"

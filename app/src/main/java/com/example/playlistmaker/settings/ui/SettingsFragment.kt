@@ -4,46 +4,51 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
 import com.google.android.material.switchmaterial.SwitchMaterial
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsFragment : Fragment() {
 
     private val viewModel: SettingsViewModel by viewModel()
 
-    @SuppressLint("QueryPermissionsNeeded")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_settings, container, false)
+    }
 
-        viewModel.isDarkTheme.observe(this) { isDarkTheme ->
+    @SuppressLint("QueryPermissionsNeeded")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.isDarkTheme.observe(viewLifecycleOwner) { isDarkTheme ->
             setAppTheme(isDarkTheme)
         }
 
-        val themeSwitch = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+        val themeSwitch = view.findViewById<SwitchMaterial>(R.id.themeSwitcher)
         themeSwitch.isChecked = viewModel.isDarkTheme.value ?: false
 
         themeSwitch.setOnCheckedChangeListener { _, _ ->
             viewModel.toggleDarkTheme()
         }
 
-        val backButton = findViewById<Button>(R.id.back)
-        backButton.setOnClickListener { finish() }
-
-        val agreementButton = findViewById<FrameLayout>(R.id.agreementButton)
+        val agreementButton = view.findViewById<FrameLayout>(R.id.agreementButton)
         agreementButton.setOnClickListener {
             val url = getString(R.string.agreement_link)
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
         }
 
-        val shareButton = findViewById<FrameLayout>(R.id.shareButton)
+        val shareButton = view.findViewById<FrameLayout>(R.id.shareButton)
         shareButton.setOnClickListener {
             Intent(Intent.ACTION_SEND).apply {
                 val shareText = getString(R.string.share_link)
@@ -53,7 +58,7 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        val supportButton = findViewById<FrameLayout>(R.id.supportButton)
+        val supportButton = view.findViewById<FrameLayout>(R.id.supportButton)
         supportButton.setOnClickListener {
             val studentEmail = "lackit27@yandex.ru"
             val emailSubject = getString(R.string.email_subject)
@@ -64,10 +69,10 @@ class SettingsActivity : AppCompatActivity() {
                 putExtra(Intent.EXTRA_SUBJECT, emailSubject)
                 putExtra(Intent.EXTRA_TEXT, emailText)
             }
-            if (intent.resolveActivity(packageManager) != null) {
+            if (intent.resolveActivity(requireActivity().packageManager) != null) {
                 startActivity(intent)
             } else {
-                Toast.makeText(this, "Почтовый клиент не установлен", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Почтовый клиент не установлен", Toast.LENGTH_SHORT).show()
             }
         }
     }

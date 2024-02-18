@@ -3,20 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorOnPrimary"
-    android:orientation="vertical">
+    style="@style/MediaBackgroudStyle"
+    android:orientation="vertical"
+    tools:context="com.example.playlistmaker.settings.ui.SettingsFragment">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="24dp">
+        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/back"
-            style="@style/BackButtonStyle"
-            tools:ignore="SpeakableTextPresentCheck" />
 
 
         <TextView
