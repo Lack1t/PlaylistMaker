@@ -1,40 +1,36 @@
 package com.example.playlistmaker.search.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.provider.ContactsContract.Intents.Insert.DATA
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.sharing.domain.Track
 import com.example.playlistmaker.player.ui.PlayerActivity
+import com.example.playlistmaker.sharing.domain.Track
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@Suppress("DEPRECATION")
 class SearchFragment : Fragment() {
 
     private var binding: FragmentSearchBinding? = null
     private val viewModel: SearchViewModel by viewModel()
     private lateinit var trackAdapter: TrackAdapter
-    private var trackClickRunnable: Runnable? = null
-    private val handler = Handler(Looper.getMainLooper())
-    private var enteredValue: String = ""
+    private val searchFlow = MutableStateFlow("")
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
-        return binding?.root
+        return binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,46 +40,34 @@ class SearchFragment : Fragment() {
         setupButtons()
         observeViewModel()
         viewModel.loadSearchHistory()
-        savedInstanceState?.getString(DATA)?.let {
-            enteredValue = it
-            binding?.searchEditText?.setText(enteredValue)
-            viewModel.searchTracks(enteredValue)
-        }
     }
 
     private fun setupRecyclerView() {
         trackAdapter = TrackAdapter(emptyList()) { track ->
-            trackClickRunnable?.let { handler.removeCallbacks(it) }
-            trackClickRunnable = Runnable {
-                viewModel.addTrackToSearchHistory(track)
-                openPlayer(track)
-            }
-            handler.postDelayed(trackClickRunnable!!, 200)
+            viewModel.addTrackToSearchHistory(track)
+            openPlayer(track)
         }
         binding?.recyclerView?.layoutManager = LinearLayoutManager(context)
         binding?.recyclerView?.adapter = trackAdapter
     }
 
+    @OptIn(FlowPreview::class)
     private fun setupSearchEditText() {
-        binding?.searchEditText?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
+        binding?.searchEditText?.doOnTextChanged { text, _, _, _ ->
+            searchFlow.value = text.toString()
+        }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                enteredValue = s.toString()
-                if (enteredValue.isEmpty()) {
+        lifecycleScope.launchWhenStarted {
+            searchFlow.debounce(300).collect { searchText ->
+                if (searchText.isEmpty()) {
                     viewModel.loadSearchHistory()
                 } else {
-                    viewModel.searchTracks(enteredValue)
+                    viewModel.searchTracks(searchText)
                 }
-                binding?.clearSearchButton?.visibility =
-                    if (enteredValue.isNotEmpty()) View.VISIBLE else View.GONE
-                binding?.clearHistoryButton?.visibility =
-                    if (enteredValue.isEmpty()) View.VISIBLE else View.GONE
+                binding?.clearSearchButton?.isVisible = searchText.isNotEmpty()
+                binding?.clearHistoryButton?.isVisible = searchText.isEmpty()
             }
-            override fun afterTextChanged(s: Editable?) {
-            }
-        })
+        }
     }
 
     private fun setupButtons() {
@@ -93,54 +77,47 @@ class SearchFragment : Fragment() {
             viewModel.loadSearchHistory()
         }
 
-        binding?.buttonRefresh?.setOnClickListener {
-            viewModel.searchTracks(enteredValue)
-        }
-
         binding?.clearHistoryButton?.setOnClickListener {
             viewModel.clearSearchHistory()
         }
     }
 
-    private fun hideKeyboard() {
-        val inputMethodManager =
-            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(binding?.searchEditText?.windowToken, 0)
-    }
-
     private fun observeViewModel() {
-        viewModel.isSearchHistoryAvailable.observe(viewLifecycleOwner) { isAvailable ->
-            binding?.clearHistoryButton?.visibility =
-                if (isAvailable) View.VISIBLE else View.GONE
+        lifecycleScope.launchWhenStarted {
+            viewModel.tracks.collect { tracks ->
+                updateUIWithTracks(tracks)
+            }
         }
 
-        viewModel.tracks.observe(viewLifecycleOwner) { tracks ->
-            updateUIWithTracks(tracks)
-
+        lifecycleScope.launchWhenStarted {
+            viewModel.isSearchHistoryAvailable.collect { isAvailable ->
+                binding?.clearHistoryButton?.isVisible = isAvailable
+            }
         }
     }
 
-
-    @SuppressLint("NotifyDataSetChanged")
     private fun updateUIWithTracks(tracks: List<Track>) {
         trackAdapter.updateData(tracks)
-        val noTracksFound = tracks.isEmpty() && enteredValue.isNotEmpty()
-        trackAdapter.notifyDataSetChanged()
-        binding?.linearNothingFound?.visibility = if (noTracksFound) View.VISIBLE else View.GONE
-        binding?.recyclerView?.visibility = if (noTracksFound) View.GONE else View.VISIBLE
-        binding?.progressBar?.visibility = View.GONE
+        val noTracksFound = tracks.isEmpty()
+        binding?.linearNothingFound?.isVisible = noTracksFound && searchFlow.value.isNotEmpty()
+        binding?.recyclerView?.isVisible = !noTracksFound
     }
 
+
     private fun openPlayer(track: Track) {
-        val intent = Intent(requireActivity(), PlayerActivity::class.java).apply {
+        val intent = Intent(activity, PlayerActivity::class.java).apply {
             putExtra("track", track)
         }
         startActivity(intent)
     }
 
+    private fun hideKeyboard() {
+        val inputMethodManager = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        inputMethodManager?.hideSoftInputFromWindow(binding?.searchEditText?.windowToken, 0)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
-        trackClickRunnable?.let { handler.removeCallbacks(it) }
     }
 }

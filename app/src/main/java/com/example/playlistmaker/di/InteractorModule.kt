@@ -9,4 +9,5 @@ import org.koin.dsl.module
 val interactorModule = module {
     factory<SettingsInteractor> { SettingsInteractorImpl(get()) }
     factory<SearchInteractor> { SearchInteractorImpl(get()) }
+
 }
