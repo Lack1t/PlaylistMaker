@@ -1,7 +1,6 @@
 package com.example.playlistmaker.player.ui
+
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -18,6 +17,7 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
 
     private val viewModel: PlayerViewModel by viewModel()
     private lateinit var binding: ActivityPlayerBinding
+
     private lateinit var job: Job
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -25,8 +25,7 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        setContentView(binding.root)
         job = Job()
 
         setupListeners()
@@ -37,8 +36,6 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
         }
     }
 
-
-
     private fun setupListeners() {
         binding.btnPlay.setOnClickListener {
             viewModel.playOrPause()
@@ -47,11 +44,15 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
         binding.btnPlayerBack.setOnClickListener {
             onBackPressed()
         }
+
+        binding.btnFavorite.setOnClickListener {
+            viewModel.onFavoriteClicked()
+        }
     }
 
     private fun observeViewModel() {
         viewModel.trackData.observe(this) { track ->
-            fillTrackData(track)
+            track?.let { fillTrackData(it) }
         }
 
         viewModel.playStatus.observe(this) { isPlaying ->
@@ -61,35 +62,41 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
         viewModel.trackPosition.observe(this) { position ->
             binding.progressTime.text = formatTrackDuration(position)
         }
+
+        viewModel.isFavorite.observe(this) { isFavorite ->
+            updateFavoriteButtonImage(isFavorite)
+        }
     }
 
     private fun fillTrackData(track: Track) {
-        findViewById<TextView>(R.id.trackNameResult).text = track.trackName
-        findViewById<TextView>(R.id.artistNameResult).text = track.artistName
-        findViewById<TextView>(R.id.collection_Name).text = track.collectionName
-        findViewById<TextView>(R.id.release_Date).text = Track.formatReleaseDate(track.releaseDate)
-        findViewById<TextView>(R.id.primary_GenreName).text = track.primaryGenreName
-        findViewById<TextView>(R.id.country).text = track.country
-        val trackTimeMillis = track.trackTimeMillis.toLongOrNull()
-        val formattedDuration = if (trackTimeMillis != null) {
-            formatTrackDuration(trackTimeMillis)
-        } else {
-            "00:00"
-        }
-        findViewById<TextView>(R.id.trackTimeResult).text = formattedDuration
+        with(binding) {
+            trackNameResult.text = track.trackName
+            artistNameResult.text = track.artistName
+            collectionName.text = track.collectionName
+            releaseDate.text = Track.formatReleaseDate(track.releaseDate)
+            primaryGenreName.text = track.primaryGenreName
+            country.text = track.country
 
+            track.trackTimeMillis.toLongOrNull()?.let {
+                trackTimeResult.text = formatTrackDuration(it)
+            } ?: run {
+                trackTimeResult.text = "00:00"
+            }
 
-        findViewById<ImageView>(R.id.track_image).apply {
             Glide.with(this@PlayerActivity)
                 .load(Track.getCoverArtwork(track.artworkUrl100))
                 .placeholder(R.drawable.placeholder)
                 .transform(CenterCrop(), RoundedCorners(resources.getDimensionPixelSize(R.dimen.album_cover_corner_radius)))
-                .into(this)
+                .into(trackImage)
         }
     }
 
     private fun updateButtonImage(isPlaying: Boolean) {
         binding.btnPlay.setImageResource(if (isPlaying) R.drawable.button_pause else R.drawable.button_play)
+    }
+
+    private fun updateFavoriteButtonImage(isFavorite: Boolean) {
+        binding.btnFavorite.setImageResource(if (isFavorite) R.drawable.button_like_favorite else R.drawable.button__like)
     }
 
     private fun formatTrackDuration(durationInMillis: Long): String {
