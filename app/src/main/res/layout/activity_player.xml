@@ -57,6 +57,7 @@
     <TextView
         android:id="@+id/artistNameResult"
         style="@style/artistTrackStyle"
+        android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/trackNameResult"
         app:layout_constraintStart_toStartOf="@+id/track_image"
         app:layout_constraintEnd_toEndOf="@+id/track_image" />
@@ -68,8 +69,8 @@
         app:layout_constraintStart_toStartOf="@+id/btnPlay"
         app:layout_constraintTop_toBottomOf="@+id/artistNameResult"
         app:layout_constraintBottom_toTopOf="@+id/progressTime"
-        android:src="@drawable/button__add"
         tools:ignore="MissingConstraints" />
+
     <ImageButton
         android:id="@+id/btnPlay"
         style="@style/playButton"
@@ -80,12 +81,11 @@
 
     <ImageButton
         android:id="@+id/btnFavorite"
-        style="@style/add_FavoriteButton"
+        style="@style/add_LikeButton"
         app:layout_constraintStart_toEndOf="@+id/btnPlay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/artistNameResult"
         app:layout_constraintBottom_toTopOf="@id/progressTime"
-        android:src="@drawable/button__like"
         tools:ignore="MissingConstraints" />
 
     <TextView

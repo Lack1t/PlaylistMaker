@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.databinding.FragmentFavoriteBinding
 import com.example.playlistmaker.player.ui.PlayerActivity
+import com.example.playlistmaker.search.ui.TrackAdapter
 import com.example.playlistmaker.sharing.domain.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -19,7 +20,7 @@ class FavoriteFragment : Fragment() {
 
     private val viewModel: FavoriteViewModel by viewModel()
 
-    private lateinit var favoriteTracksAdapter: FavoriteTracksAdapter
+    private lateinit var trackAdapter: TrackAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentFavoriteBinding.inflate(inflater, container, false)
@@ -29,12 +30,13 @@ class FavoriteFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        favoriteTracksAdapter = FavoriteTracksAdapter(mutableListOf()) { track ->
+
+        trackAdapter = TrackAdapter(mutableListOf()) { track ->
             openPlayer(track)
         }
         binding.favoriteTracksRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = favoriteTracksAdapter
+            adapter = trackAdapter
         }
     }
 
@@ -46,26 +48,36 @@ class FavoriteFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.favorites.observe(viewLifecycleOwner) { tracks ->
-            if (tracks.isEmpty()) {
-                binding.emptyStateImage.visibility = View.VISIBLE
-                binding.emptyStateText.visibility = View.VISIBLE
-            } else {
-                binding.emptyStateImage.visibility = View.GONE
-                binding.emptyStateText.visibility = View.GONE
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is FavoriteScreenState.FavoritesData -> {
+                    if (state.tracks.isEmpty()) {
+                        binding.emptyStateImage.visibility = View.VISIBLE
+                        binding.emptyStateText.visibility = View.VISIBLE
+                    } else {
+                        binding.emptyStateImage.visibility = View.GONE
+                        binding.emptyStateText.visibility = View.GONE
+                        trackAdapter.updateData(state.tracks)
+                    }
+                }
+                else -> {
+
+                }
             }
-            favoriteTracksAdapter.updateTracks(tracks)
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
     override fun onResume() {
         super.onResume()
         viewModel.loadFavorites()
     }
+
     companion object {
         fun newInstance() = FavoriteFragment()
     }

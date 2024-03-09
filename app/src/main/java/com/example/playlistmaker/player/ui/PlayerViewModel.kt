@@ -39,7 +39,11 @@ class PlayerViewModel(
 
     fun loadTrack(track: Track) {
         _trackData.value = track
-        mediaPlayerManager.prepareMediaPlayer(track.previewUrl)
+        if (track.previewUrl.isNotEmpty()) {
+            mediaPlayerManager.prepareMediaPlayer(track.previewUrl)
+        } else {
+            // when previewUrl is null or empty
+        }
         _playStatus.postValue(false)
         checkIfTrackIsFavorite(track.trackId!!)
     }

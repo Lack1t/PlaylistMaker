@@ -12,7 +12,6 @@ import org.koin.dsl.module
 val repositoryModule = module {
     single { SettingsRepository(get()) }
     single<SearchRepository> { SearchRepositoryImpl(get(), get()) }
-    single { AppDatabase.getDatabase(get()) }
     factory { TrackDbConverter() }
     single<FavoriteTracksRepository> { FavoriteTracksRepositoryImpl(get()) }
 }

@@ -1,5 +1,6 @@
 package com.example.playlistmaker.player.ui
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -80,7 +81,7 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
             track.trackTimeMillis.toLongOrNull()?.let {
                 trackTimeResult.text = formatTrackDuration(it)
             } ?: run {
-                trackTimeResult.text = "00:00"
+                trackTimeResult.text = formatTrackDuration(0)
             }
 
             Glide.with(this@PlayerActivity)
@@ -96,9 +97,18 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
     }
 
     private fun updateFavoriteButtonImage(isFavorite: Boolean) {
-        binding.btnFavorite.setImageResource(if (isFavorite) R.drawable.button_like_favorite else R.drawable.button__like)
-    }
+        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val isNightMode = currentNightMode == Configuration.UI_MODE_NIGHT_YES
 
+        val iconResId = when {
+            isFavorite && isNightMode -> R.drawable.button_like_favorite_dark
+            isFavorite -> R.drawable.button_like_favorite
+            isNightMode -> R.drawable.button__like_dark
+            else -> R.drawable.button__like
+        }
+
+        binding.btnFavorite.setImageResource(iconResId)
+    }
     private fun formatTrackDuration(durationInMillis: Long): String {
         val minutes = durationInMillis / 60000
         val seconds = (durationInMillis % 60000) / 1000

@@ -104,6 +104,15 @@
         <item name="android:backgroundTint">@color/white</item>
         <item name="android:layout_marginTop">44dp</item>
         <item name="android:layout_weight">1</item>
+        <item name="android:src">@drawable/button__add</item>
+    </style>
+    <style name="add_LikeButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:layout_marginTop">44dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:src">@drawable/button__like</item>
     </style>
     <style name="playerTrackResult">
     <item name="android:layout_width">wrap_content</item>
