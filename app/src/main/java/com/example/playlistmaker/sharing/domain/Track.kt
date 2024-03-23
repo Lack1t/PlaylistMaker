@@ -12,6 +12,7 @@ data class Track(val trackName: String,
                  val releaseDate: String,
                  val primaryGenreName: String,
                  val country: String,
+                 var isFavorite: Boolean = false,
                  val previewUrl: String,): Serializable
  {
     companion object {

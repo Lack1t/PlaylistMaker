@@ -1,13 +1,25 @@
 package com.example.playlistmaker.player.ui
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.media.domain.FavoriteTracksRepository
 import com.example.playlistmaker.player.domain.MediaPlayerManager
 import com.example.playlistmaker.sharing.domain.Track
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-class PlayerViewModel(private val mediaPlayerManager: MediaPlayerManager) : ViewModel(), CoroutineScope {
+class PlayerViewModel(
+    private val mediaPlayerManager: MediaPlayerManager,
+    private val favoriteTracksRepository: FavoriteTracksRepository
+) : ViewModel(), CoroutineScope {
     private val _trackData = MutableLiveData<Track>()
     val trackData: LiveData<Track> = _trackData
 
@@ -17,6 +29,9 @@ class PlayerViewModel(private val mediaPlayerManager: MediaPlayerManager) : View
     private val _trackPosition = MutableLiveData<Long>()
     val trackPosition: LiveData<Long> = _trackPosition
 
+    private val _isFavorite = MutableLiveData<Boolean>()
+    val isFavorite: LiveData<Boolean> = _isFavorite
+
     private var playerJob: Job? = null
 
     override val coroutineContext: CoroutineContext
@@ -24,8 +39,20 @@ class PlayerViewModel(private val mediaPlayerManager: MediaPlayerManager) : View
 
     fun loadTrack(track: Track) {
         _trackData.value = track
-        mediaPlayerManager.prepareMediaPlayer(track.previewUrl)
+        if (track.previewUrl.isNotEmpty()) {
+            mediaPlayerManager.prepareMediaPlayer(track.previewUrl)
+        } else {
+            // when previewUrl is null or empty
+        }
         _playStatus.postValue(false)
+        checkIfTrackIsFavorite(track.trackId!!)
+    }
+
+    private fun checkIfTrackIsFavorite(trackId: String) {
+        viewModelScope.launch {
+            val isFav = favoriteTracksRepository.isTrackFavorite(trackId)
+            _isFavorite.postValue(isFav)
+        }
     }
 
     fun playOrPause() {
@@ -39,11 +66,20 @@ class PlayerViewModel(private val mediaPlayerManager: MediaPlayerManager) : View
         }
     }
 
-    fun releaseResources() {
-        mediaPlayerManager.release()
+    fun onFavoriteClicked() {
+        val currentTrack = _trackData.value ?: return
+        viewModelScope.launch {
+            if (_isFavorite.value == true) {
+                favoriteTracksRepository.removeTrackFromFavorites(currentTrack.trackId!!)
+                _isFavorite.postValue(false)
+            } else {
+                favoriteTracksRepository.addTrackToFavorites(currentTrack)
+                _isFavorite.postValue(true)
+            }
+        }
     }
 
-   fun startTrackingPosition() {
+    fun startTrackingPosition() {
         playerJob?.cancel()
         playerJob = launch {
             while (isActive) {
@@ -63,10 +99,14 @@ class PlayerViewModel(private val mediaPlayerManager: MediaPlayerManager) : View
         playerJob?.cancel()
     }
 
+    fun releaseResources() {
+        mediaPlayerManager.release()
+        playerJob?.cancel()
+    }
+
     override fun onCleared() {
         super.onCleared()
-        playerJob?.cancel()
-        mediaPlayerManager.release()
+        releaseResources()
     }
 
     fun isPlaying(): Boolean {
