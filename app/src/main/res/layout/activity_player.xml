@@ -1,8 +1,18 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <View
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/leftBorder"
@@ -57,6 +67,7 @@
     <TextView
         android:id="@+id/artistNameResult"
         style="@style/artistTrackStyle"
+        android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/trackNameResult"
         app:layout_constraintStart_toStartOf="@+id/track_image"
         app:layout_constraintEnd_toEndOf="@+id/track_image" />
@@ -68,8 +79,8 @@
         app:layout_constraintStart_toStartOf="@+id/btnPlay"
         app:layout_constraintTop_toBottomOf="@+id/artistNameResult"
         app:layout_constraintBottom_toTopOf="@+id/progressTime"
-        android:src="@drawable/button__add"
         tools:ignore="MissingConstraints" />
+
     <ImageButton
         android:id="@+id/btnPlay"
         style="@style/playButton"
@@ -80,12 +91,12 @@
 
     <ImageButton
         android:id="@+id/btnFavorite"
-        style="@style/add_FavoriteButton"
-        app:layout_constraintStart_toEndOf="@+id/btnPlay"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/artistNameResult"
+        style="@style/add_LikeButton"
         app:layout_constraintBottom_toTopOf="@id/progressTime"
-        android:src="@drawable/button__like"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnPlay"
+        app:layout_constraintTop_toBottomOf="@id/artistNameResult"
+        app:layout_constraintVertical_bias="0.506"
         tools:ignore="MissingConstraints" />
 
     <TextView
@@ -174,5 +185,56 @@
         app:layout_constraintBottom_toBottomOf="@+id/downBorder"
         app:layout_constraintTop_toBottomOf="@+id/primaryGenreName_field"
         tools:ignore="MissingConstraints"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+        android:id="@+id/overlay_play"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:id="@+id/playlists_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:orientation="vertical"
+        android:background="@drawable/background_bottom_sheet"
+        app:behavior_hideable="true"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        tools:visibility="gone"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/album_cover_corner_radius"
+            android:src="@drawable/hide_bottom"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            style="@style/AddNewPlaylist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/add_playlist" />
+
+        <Button
+            android:id="@+id/btn_create_playlist"
+            style="@style/RefreshButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/padding24dp"
+            android:text="@string/new_playlist" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rw_playlists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding24dp"
+            tools:itemCount="5"/>
+    </LinearLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

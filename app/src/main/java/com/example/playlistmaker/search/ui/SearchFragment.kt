@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.ui
 
+
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -65,7 +66,6 @@ class SearchFragment : Fragment() {
                     viewModel.searchTracks(searchText)
                 }
                 binding?.clearSearchButton?.isVisible = searchText.isNotEmpty()
-                binding?.clearHistoryButton?.isVisible = searchText.isEmpty()
             }
         }
     }

@@ -33,6 +33,7 @@ class MediaPlayerManagerImpl : MediaPlayerManager {
     }
 
     override fun prepareMediaPlayer(previewUrl: String) {
+
         mediaPlayer?.apply {
             if (isPlaying || isPrepared) {
                 reset()
