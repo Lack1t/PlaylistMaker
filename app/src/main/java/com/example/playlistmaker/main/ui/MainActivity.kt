@@ -1,9 +1,11 @@
 package com.example.playlistmaker.main.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.playlistmaker.R
@@ -22,5 +24,12 @@ class MainActivity : AppCompatActivity() {
 
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_nav)
         bottomNavView.setupWithNavController(navController)
+    }
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent?.getBooleanExtra("navigateToCreatePlaylist", false) == true) {
+            val navController = findNavController(R.id.fragment_container)
+            navController.navigate(R.id.action_global_to_createPlaylistFragment)
+        }
     }
 }
