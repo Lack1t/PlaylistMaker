@@ -4,52 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
     app:startDestination="@id/mediaFragment2">
-
     <fragment
         android:id="@+id/searchFragment2"
         android:name="com.example.playlistmaker.search.ui.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" />
-
     <fragment
         android:id="@+id/settingsFragment2"
         android:name="com.example.playlistmaker.settings.ui.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
-
     <fragment
         android:id="@+id/mediaFragment2"
         android:name="com.example.playlistmaker.media.ui.MediaFragment"
         android:label="fragment_media"
-        tools:layout="@layout/fragment_media"/>
-
-    <fragment
-        android:id="@+id/createPlaylistFragment"
-        android:name="com.example.playlistmaker.media.ui.CreatePlaylistFragment"
-        android:label="fragment_create_playlist"
-        tools:layout="@layout/fragment_create_playlist">
-        <action
-            android:id="@+id/action_createPlaylistFragment_to_mediaFragment2"
-            app:destination="@id/mediaFragment2"
-            app:popUpTo="@id/mediaFragment2"
-            app:popUpToInclusive="false"/>
-        <action
-            android:id="@+id/action_createPlaylistFragment_to_playerActivity"
-            app:destination="@id/playerActivity" />
-    </fragment>
-
-    <action
-        android:id="@+id/action_global_to_createPlaylistFragment"
-        app:destination="@id/createPlaylistFragment" />
-    <fragment
-        android:id="@+id/playlistFragment"
-        android:name="com.example.playlistmaker.media.ui.PlaylistFragment"
-        android:label="PlaylistFragment"
-        tools:layout="@layout/fragment_playlist">
-    </fragment>
-    <activity
-        android:id="@+id/playerActivity"
-        android:name="com.example.playlistmaker.player.ui.PlayerActivity"
-        android:label="PlayerActivity" />
-
+        tools:layout="@layout/fragment_media" />
 </navigation>

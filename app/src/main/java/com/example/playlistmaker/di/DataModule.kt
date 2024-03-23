@@ -19,8 +19,5 @@ val dataModule = module {
             .build()
     }
     single { get<AppDatabase>().favoriteTrackDao() }
-    single { get<AppDatabase>().playlistDao() }
-    single { get<AppDatabase>().playlistTrackDao() }
-
 
 }
