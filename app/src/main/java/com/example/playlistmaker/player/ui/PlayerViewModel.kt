@@ -1,13 +1,12 @@
 package com.example.playlistmaker.player.ui
 import com.example.playlistmaker.media.domain.PlaylistRepository
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.data.db.PlaylistEntity
 import com.example.playlistmaker.media.domain.FavoriteTracksRepository
 import com.example.playlistmaker.player.domain.MediaPlayerManager
+import com.example.playlistmaker.sharing.domain.Playlist
 import com.example.playlistmaker.sharing.domain.Track
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,8 +39,8 @@ class PlayerViewModel(
 
     private val _message = MutableLiveData<String?>()
     val message: LiveData<String?> = _message
-    private val _playlists = MutableLiveData<List<PlaylistEntity>>()
-    val playlists: LiveData<List<PlaylistEntity>> = _playlists
+    private val _playlists = MutableLiveData<List<Playlist>>()
+    val playlists: LiveData<List<Playlist>> = _playlists
 
     private var playerJob: Job? = null
 
@@ -134,16 +133,12 @@ class PlayerViewModel(
         return mediaPlayerManager.isPlaying()
     }
     fun loadPlaylists() {
-        Log.d("PlayerViewModel", "loadPlaylists called")
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             playlistRepository.getAllPlaylists().collect { playlists ->
-                Log.d("PlayerViewModel", "Loading playlists: ${playlists.size} found")
-                withContext(Dispatchers.Main) {
-                    _playlists.postValue(playlists)
-                }
+                _playlists.postValue(playlists)
             }
         }
     }
-    }
+}
 
 

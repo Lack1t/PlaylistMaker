@@ -44,5 +44,7 @@
         <item quantity="few">%d трека</item>
         <item quantity="many">%d треков</item>
         <item quantity="other">%d треков</item>
+        <item quantity="two">%d трека</item>
+        <item quantity="zero">%d треков</item>
     </plurals>
 </resources>

@@ -12,12 +12,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.db.PlaylistEntity
+import com.example.playlistmaker.sharing.domain.Playlist
 
-class PlaylistBottomSheetAdapter(
-    private var playlists: List<PlaylistEntity>,
-    private val onPlaylistSelected: (PlaylistEntity) -> Unit
-) : RecyclerView.Adapter<PlaylistBottomSheetAdapter.PlaylistViewHolder>() {
+class PlaylistBottomSheetAdapter(private var playlists: List<Playlist>,
+                                 private val onPlaylistSelected: (Playlist) -> Unit
+) : RecyclerView.Adapter<PlaylistBottomSheetAdapter.PlaylistViewHolder>()  {
 
     inner class PlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val coverImageView: ImageView = itemView.findViewById(R.id.iv_playlist_cover)
@@ -25,21 +24,25 @@ class PlaylistBottomSheetAdapter(
         private val numOfTracksTextView: TextView = itemView.findViewById(R.id.tv_num_of_tracks)
 
         @SuppressLint("SetTextI18n")
-        fun bind(playlist: PlaylistEntity) {
+        fun bind(playlist: Playlist) {
             titleTextView.text = playlist.title
             numOfTracksTextView.text = formatTracksCount(playlist.trackCount, itemView.context)
             loadCoverImage(playlist.coverImagePath)
         }
 
-        private fun loadCoverImage(imagePath: String) {
-            Glide.with(itemView.context)
-                .load(imagePath)
+        private fun loadCoverImage(imagePath: String?) {
+            if (imagePath != null && imagePath.isNotEmpty()) {
+                Glide.with(itemView.context)
+                    .load(imagePath)
                 .placeholder(R.drawable.placeholder)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .centerCrop()
                 .transform(RoundedCorners(dpToPx(8f, itemView.context)))
                 .into(coverImageView)
+        } else {
+            coverImageView.setImageResource(R.drawable.placeholder)
         }
+    }
 
         private fun dpToPx(dp: Float, context: Context): Int {
             return TypedValue.applyDimension(
@@ -66,7 +69,7 @@ class PlaylistBottomSheetAdapter(
     override fun getItemCount(): Int = playlists.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setPlaylists(newPlaylists: List<PlaylistEntity>) {
+    fun setPlaylists(newPlaylists: List<Playlist>) {
         playlists = newPlaylists
         notifyDataSetChanged()
     }
@@ -74,11 +77,7 @@ class PlaylistBottomSheetAdapter(
     companion object {
         fun formatTracksCount(count: Int, context: Context): String {
             val res = context.resources
-            return when {
-                count % 10 == 1 && count % 100 != 11 -> res.getQuantityString(R.plurals.tracks, 1, count)
-                count % 10 in 2..4 && !(count % 100 in 12..14) -> res.getQuantityString(R.plurals.tracks, 2, count)
-                else -> res.getQuantityString(R.plurals.tracks, count, count)
-            }
+            return res.getQuantityString(R.plurals.tracks, count, count)
         }
     }
 }

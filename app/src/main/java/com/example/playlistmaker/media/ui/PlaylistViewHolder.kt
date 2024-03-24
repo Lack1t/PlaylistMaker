@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.playlistmaker.R
@@ -21,7 +22,7 @@ class PlaylistViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             .placeholder(R.drawable.placeholder)
             .transition(DrawableTransitionOptions.withCrossFade())
             .centerCrop()
-            .transform(RoundedCorners(dpToPx(8f, itemView.context)))
+            .transform(CenterCrop(), RoundedCorners(dpToPx(8f, itemView.context)))
             .into(coverImageView)
     }
     private fun dpToPx(dp: Float, context: Context): Int {

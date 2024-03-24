@@ -17,44 +17,53 @@ class PlaylistFragment : Fragment() {
     private val viewModel: PlaylistViewModel by viewModel()
     private lateinit var playlistAdapter: PlaylistAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
+        setupRecyclerView()
+        return binding.root
+    }
+
+    private fun setupRecyclerView() {
         playlistAdapter = PlaylistAdapter()
         binding.rvPlaylists.adapter = playlistAdapter
-        return binding.root
-
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        observePlaylists()
+        setupNewPlaylistButton()
+    }
 
+    private fun observePlaylists() {
         viewModel.playlists.observe(viewLifecycleOwner) { playlists ->
             playlistAdapter.setPlaylists(playlists)
-            if (playlists.isEmpty()) {
-
-                binding.imageZeroPlaylist.visibility = View.VISIBLE
-                binding.zeroPlaylists.visibility = View.VISIBLE
-                binding.rvPlaylists.visibility = View.GONE
-            } else {
-                binding.imageZeroPlaylist.visibility = View.GONE
-                binding.zeroPlaylists.visibility = View.GONE
-                binding.rvPlaylists.visibility = View.VISIBLE
-            }
+            updateUIBasedOnPlaylists(playlists.isEmpty())
         }
+    }
 
+    private fun updateUIBasedOnPlaylists(isEmpty: Boolean) {
+        binding.imageZeroPlaylist.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        binding.zeroPlaylists.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        binding.rvPlaylists.visibility = if (isEmpty) View.GONE else View.VISIBLE
+    }
+
+    private fun setupNewPlaylistButton() {
         binding.btnNewPlaylist.setOnClickListener {
             findNavController().navigate(R.id.action_global_to_createPlaylistFragment)
         }
-
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-    companion object {
+
+
+companion object {
         fun newInstance(): PlaylistFragment {
             return PlaylistFragment()
         }
