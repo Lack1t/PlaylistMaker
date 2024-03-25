@@ -1,17 +1,13 @@
 package com.example.playlistmaker.data.db
 
-
 import androidx.room.Database
 import androidx.room.RoomDatabase
 
-@Database(entities = [FavoriteTrack::class], version = 3, exportSchema = false)
+@Database(entities = [FavoriteTrack::class, PlaylistEntity::class, PlaylistTrackEntity::class], version = 8, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun favoriteTrackDao(): FavoriteTrackDao
-
-    companion object {
-        @Volatile
-        private var INSTANCE: AppDatabase? = null
-
-
-        }
+    abstract fun playlistDao(): PlaylistDao
+    abstract fun playlistTrackDao(): PlaylistTrackDao
 }
+
+

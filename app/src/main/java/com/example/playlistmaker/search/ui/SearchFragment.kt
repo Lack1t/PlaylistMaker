@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.ui
 
+
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -27,7 +28,7 @@ class SearchFragment : Fragment() {
     private val viewModel: SearchViewModel by viewModel()
     private lateinit var trackAdapter: TrackAdapter
     private val searchFlow = MutableStateFlow("")
-
+    private val isSearching = MutableStateFlow(false)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding!!.root
@@ -55,6 +56,9 @@ class SearchFragment : Fragment() {
     private fun setupSearchEditText() {
         binding?.searchEditText?.doOnTextChanged { text, _, _, _ ->
             searchFlow.value = text.toString()
+            if (text != null) {
+                isSearching.value = text.isNotEmpty()
+            }
         }
 
         lifecycleScope.launchWhenStarted {
@@ -85,15 +89,17 @@ class SearchFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             viewModel.tracks.collect { tracks ->
                 updateUIWithTracks(tracks)
+                binding?.clearHistoryButton?.isVisible = viewModel.isSearchHistoryAvailable.value && !isSearching.value
             }
         }
 
         lifecycleScope.launchWhenStarted {
             viewModel.isSearchHistoryAvailable.collect { isAvailable ->
-                binding?.clearHistoryButton?.isVisible = isAvailable
+                binding?.clearHistoryButton?.isVisible = isAvailable && !isSearching.value
             }
         }
     }
+
 
     private fun updateUIWithTracks(tracks: List<Track>) {
         trackAdapter.updateData(tracks)
