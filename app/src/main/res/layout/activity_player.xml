@@ -89,7 +89,7 @@
         android:src ="@drawable/button_play"
         app:layout_constraintTop_toBottomOf="@+id/artistNameResult" />
 
-    <ImageButton
+   <ImageButton
         android:id="@+id/btnFavorite"
         style="@style/add_LikeButton"
         app:layout_constraintBottom_toTopOf="@id/progressTime"
@@ -98,6 +98,7 @@
         app:layout_constraintTop_toBottomOf="@id/artistNameResult"
         app:layout_constraintVertical_bias="0.506"
         tools:ignore="MissingConstraints" />
+
 
     <TextView
         android:id="@+id/progressTime"

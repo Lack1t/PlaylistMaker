@@ -46,8 +46,7 @@ class PlayerViewModel(
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + (playerJob ?: SupervisorJob())
-
-    fun loadTrack(track: Track) {
+   fun loadTrack(track: Track) {
         _trackData.value = track
         _currentTrack.value = track
         if (track.previewUrl.isNotEmpty()) {
@@ -56,6 +55,7 @@ class PlayerViewModel(
         _playStatus.postValue(false)
         checkIfTrackIsFavorite(track.trackId)
     }
+
 
     private fun checkIfTrackIsFavorite(trackId: String?) {
         trackId?.let {

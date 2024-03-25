@@ -188,7 +188,7 @@ class PlayerActivity : AppCompatActivity(), CoroutineScope {
             isFavorite -> R.drawable.button_like_favorite
             isNightMode -> R.drawable.button__like_dark
             else -> R.drawable.button__like
-        }
+     }
 
         binding.btnFavorite.setImageResource(iconResId)
     }
